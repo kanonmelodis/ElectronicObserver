@@ -1,5 +1,4 @@
-﻿using Codeplex.Data;
-using ElectronicObserver.Data;
+﻿using ElectronicObserver.Data;
 using ElectronicObserver.Observer;
 using ElectronicObserver.Resource;
 using ElectronicObserver.Utility.Data;
@@ -8,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,12 +19,14 @@ namespace ElectronicObserver.Window {
 
 		private int _ignorePort;
 		private List<int> _inSortie;
+		private int[] _prevResource;
 
 		public FormInformation( FormMain parent ) {
 			InitializeComponent();
 
 			_ignorePort = 0;
 			_inSortie = null;
+			_prevResource = new int[4];
 
 			ConfigurationChanged();
 
@@ -50,50 +50,14 @@ namespace ElectronicObserver.Window {
 			o["api_req_hokyu/charge"].ResponseReceived += Updated;
 			o["api_req_map/start"].ResponseReceived += Updated;
 			o["api_req_practice/battle"].ResponseReceived += Updated;
-            o["api_req_map/next"].ResponseReceived += Updated;
-            o["api_req_sortie/battle"].ResponseReceived += Updated;
-            o["api_req_combined_battle/battle"].ResponseReceived += Updated;
-            o["api_req_combined_battle/battle_water"].ResponseReceived += Updated;
 
-            Utility.Configuration.Instance.ConfigurationChanged += ConfigurationChanged;
+			Utility.Configuration.Instance.ConfigurationChanged += ConfigurationChanged;
 		}
 
-		private bool ShowFailedDevelopment;
 
 		void ConfigurationChanged() {
 
 			Font = TextInformation.Font = Utility.Configuration.Config.UI.MainFont;
-
-			TextInformation.BackColor = Utility.Configuration.Config.UI.BackColor;
-			TextInformation.ForeColor = Utility.Configuration.Config.UI.ForeColor;
-
-			var settings = Information.Settings.settings;
-
-			if ( settings == null )
-			{
-				try
-				{
-					if ( File.Exists( Information.Settings.PLUGIN_SETTINGS ) )
-						settings = DynamicJson.Parse( File.ReadAllText( Information.Settings.PLUGIN_SETTINGS ) );
-					else
-						settings = DynamicJson.Parse( Information.Settings.DEFAULT_SETTINGS );
-				}
-				catch
-				{
-					settings = DynamicJson.Parse( Information.Settings.DEFAULT_SETTINGS );
-				}
-
-				Information.Settings.settings = settings;
-			}
-
-			if ( settings != null )
-			{
-				ShowFailedDevelopment = settings.ShowFailedDevelopment;
-			}
-			else
-			{
-				ShowFailedDevelopment = true;
-			}
 		}
 
 
@@ -111,6 +75,12 @@ namespace ElectronicObserver.Window {
 						TextInformation.Text = GetConsumptionResource( data );
 					}
 					_inSortie = null;
+
+					// '16 summer event
+					if ( data.api_event_object() && data.api_event_object.api_m_flag2() && (int)data.api_event_object.api_m_flag2 > 0 ) {
+						TextInformation.Text += "＊ギミック解除＊\r\n";
+						Utility.Logger.Add( 2, "敵勢力の弱体化を確認しました！" );
+					}
 					break;
 
 				case "api_req_member/get_practice_enemyinfo":
@@ -146,86 +116,24 @@ namespace ElectronicObserver.Window {
 
 				case "api_req_map/start":
 					_inSortie = KCDatabase.Instance.Fleet.Fleets.Values.Where( f => f.IsInSortie || f.ExpeditionState == 1 ).Select( f => f.FleetID ).ToList();
+
+					// 出撃時の資源を記録
+					{
+						var material = KCDatabase.Instance.Material;
+						_prevResource[0] = material.Fuel;
+						_prevResource[1] = material.Ammo;
+						_prevResource[2] = material.Steel;
+						_prevResource[3] = material.Bauxite;
+					}
 					break;
 
 				case "api_req_practice/battle":
 					_inSortie = new List<int>() { KCDatabase.Instance.Battle.BattleDay.Initial.FriendFleetID };
 					break;
-
-                case "api_req_map/next":
-                    var info = GetAirBaseAttackImformation(data);
-                    if (info != null)
-                        TextInformation.Text = info;
-                    break;
-
-                case "api_req_sortie/battle":
-                case "api_req_combined_battle/battle":
-                case "api_req_combined_battle/battle_water":
-                    var Damaged = GetBossDamaged(data);
-                    if (Damaged != null)
-                        TextInformation.Text = Damaged;
-                    break;
-            }
+			}
 
 		}
 
-        private string GetBossDamaged(dynamic data)
-        {
-            if (data.api_boss_damaged())
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("[BOSS受损情报]");
-                int BossDamaged = (int)(data.api_boss_damaged);
-                sb.AppendFormat("BOSS受损状态:{0}", BossDamaged == 1 ? "是" : "否");
-                return sb.ToString();
-            }
-            return null;
-        }
-
-        private string GetAirBaseAttackImformation(dynamic data)
-        {
-            if (data.api_destruction_battle())
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("[基地遭受空袭]");
-
-                int[] NowHP = (int[])(data.api_destruction_battle.api_nowhps);
-                int[] MaxHP = (int[])(data.api_destruction_battle.api_maxhps);
-                var air_base_attack = data.api_destruction_battle.api_air_base_attack;
-                int[] stageFlag = (int[])(air_base_attack.api_stage_flag);
-                if ((int)stageFlag[0] == 1)
-                {
-                    int seiku = (int)(air_base_attack.api_stage1.api_disp_seiku);
-                    sb.AppendLine(Constants.GetAirSuperiority(seiku));
-                    int fcount = (int)(air_base_attack.api_stage1.api_f_count);
-                    int flost = (int)(air_base_attack.api_stage1.api_f_lostcount);
-                    int ecount = (int)(air_base_attack.api_stage1.api_e_count);
-                    int elost = (int)(air_base_attack.api_stage1.api_e_lostcount);
-                    if (fcount > 0)
-                    {
-                        sb.AppendFormat("我方:{0}->{1}", fcount, fcount - flost);
-                        sb.AppendLine();
-                    }
-                    sb.AppendFormat("敌方:{0}->{1}", ecount, ecount - elost);
-                    sb.AppendLine();
-
-                    if ((int)stageFlag[2] == 1)
-                    {
-                        int[] dam = (int[])(air_base_attack.api_stage3.api_fdam);
-                        for (int index = 1; index <= 6; index++)
-                        {
-                            if (MaxHP[index] == -1)
-                                break;
-                            sb.AppendFormat("基地{0}:{1}->{2}/{3}", index, NowHP[index], NowHP[index] - dam[index], MaxHP[index]);
-                            sb.AppendLine();
-                        }
-                    }
-                }
-                return sb.ToString();
-            }
-
-            return null;
-        }
 
 		private string GetPracticeEnemyInfo( dynamic data ) {
 
@@ -320,7 +228,6 @@ namespace ElectronicObserver.Window {
 			if ( data != null && data.api_list() && data.api_list != null ) {
 
 				if ( data.api_list[0].api_yomi() ) {
-
 					//艦娘図鑑
 					const int bound = 70;		// 図鑑1ページあたりの艦船数
 					int startIndex = ( ( (int)data.api_list[0].api_index_no - 1 ) / bound ) * bound + 1;
@@ -335,6 +242,7 @@ namespace ElectronicObserver.Window {
 						dynamic[] state = elem.api_state;
 						for ( int i = 0; i < state.Length; i++ ) {
 							if ( (int)state[i][1] == 0 ) {
+
 								var target = KCDatabase.Instance.MasterShips[(int)elem.api_table_id[i]];
 								if ( target != null )		//季節の衣替え艦娘の場合存在しないことがある
 									sb.AppendLine( target.Name );
@@ -354,7 +262,6 @@ namespace ElectronicObserver.Window {
 					}
 
 				} else {
-
 					//装備図鑑
 					const int bound = 70;		// 図鑑1ページあたりの装備数
 					int startIndex = ( ( (int)data.api_list[0].api_index_no - 1 ) / bound ) * bound + 1;
@@ -389,12 +296,9 @@ namespace ElectronicObserver.Window {
 				sb.AppendLine( "[開発失敗]" );
 				sb.AppendLine( data.api_fdata );
 
-				if ( ShowFailedDevelopment )
-				{
-					EquipmentDataMaster eqm = KCDatabase.Instance.MasterEquipments[int.Parse( ( (string)data.api_fdata ).Split( ",".ToCharArray() )[1] )];
-					if ( eqm != null )
-						sb.AppendLine( eqm.Name );
-				}
+				EquipmentDataMaster eqm = KCDatabase.Instance.MasterEquipments[int.Parse( ( (string)data.api_fdata ).Split( ",".ToCharArray() )[1] )];
+				if ( eqm != null )
+					sb.AppendLine( eqm.Name );
 
 
 				return sb.ToString();
@@ -421,18 +325,15 @@ namespace ElectronicObserver.Window {
 
 					} else if ( elem.api_eventmap() ) {
 
-						int now_maphp = (int)elem.api_eventmap.api_now_maphp;
-						if ( now_maphp > 0 ) {
-							string difficulty = "";
-							if ( elem.api_eventmap.api_selected_rank() ) {
-								difficulty = "[" + Constants.GetDifficulty( (int)elem.api_eventmap.api_selected_rank ) + "] ";
-							}
-
-							sb.AppendFormat( "{0}-{1} {2}: {3} {4}/{5}\r\n",
-								map.MapAreaID, map.MapInfoID, difficulty,
-								elem.api_eventmap.api_gauge_type() && (int)elem.api_eventmap.api_gauge_type == 3 ? "TP" : "HP",
-								(int)elem.api_eventmap.api_now_maphp, (int)elem.api_eventmap.api_max_maphp );
+						string difficulty = "";
+						if ( elem.api_eventmap.api_selected_rank() ) {
+							difficulty = "[" + Constants.GetDifficulty( (int)elem.api_eventmap.api_selected_rank ) + "] ";
 						}
+
+						sb.AppendFormat( "{0}-{1} {2}: {3} {4}/{5}\r\n",
+							map.MapAreaID, map.MapInfoID, difficulty,
+							elem.api_eventmap.api_gauge_type() && (int)elem.api_eventmap.api_gauge_type == 3 ? "TP" : "HP",
+							(int)elem.api_eventmap.api_now_maphp, (int)elem.api_eventmap.api_max_maphp );
 
 					}
 				}
@@ -481,12 +382,18 @@ namespace ElectronicObserver.Window {
 		private string GetConsumptionResource( dynamic data ) {
 
 			StringBuilder sb = new StringBuilder();
+			var material = KCDatabase.Instance.Material;
+
 			int fuel_supply = 0,
 				fuel_repair = 0,
 				ammo = 0,
 				steel = 0,
 				bauxite = 0;
 
+			int fuel_diff = material.Fuel - _prevResource[0],
+				ammo_diff = material.Ammo - _prevResource[1],
+				steel_diff = material.Steel - _prevResource[2],
+				bauxite_diff = material.Bauxite - _prevResource[3];
 
 			sb.AppendLine( "[艦隊帰投]" );
 
@@ -501,13 +408,19 @@ namespace ElectronicObserver.Window {
 
 			}
 
-			sb.AppendFormat( "燃料: {0} (補給) + {1} (入渠) = {2}\r\n弾薬: {3}\r\n鋼材: {4}\r\nボーキ: {5} ( {6}機 )\r\n",
-				fuel_supply, fuel_repair, fuel_supply + fuel_repair, ammo, steel, bauxite, bauxite / 5 );
+			sb.AppendFormat( "燃料: {0:+0;-0} ( 自然 {1:+0;-0} - 補給 {2} - 入渠 {3} )\r\n弾薬: {4:+0;-0} ( 自然 {5:+0;-0} - 補給 {6} )\r\n鋼材: {7:+0;-0} ( 自然 {8:+0;-0} - 入渠 {9} )\r\nボーキ: {10:+0;-0} ( 自然 {11:+0;-0} - 補給 {12} ( {13} 機 ) )",
+				fuel_diff - fuel_supply - fuel_repair, fuel_diff, fuel_supply, fuel_repair,
+				ammo_diff - ammo, ammo_diff, ammo,
+				steel_diff - steel, steel_diff, steel,
+				bauxite_diff - bauxite, bauxite_diff, bauxite, bauxite / 5 );
 
 			return sb.ToString();
 		}
 
-		public override string GetPersistString() {
+
+
+
+		protected override string GetPersistString() {
 			return "Information";
 		}
 

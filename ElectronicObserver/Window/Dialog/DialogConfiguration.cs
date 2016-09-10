@@ -3,7 +3,6 @@ using ElectronicObserver.Observer;
 using ElectronicObserver.Resource;
 using ElectronicObserver.Utility;
 using ElectronicObserver.Utility.Storage;
-using ElectronicObserver.Window.Support;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,12 +17,12 @@ using System.Windows.Forms;
 namespace ElectronicObserver.Window.Dialog {
 	public partial class DialogConfiguration : Form {
 
-		private static readonly string RegistryPathMaster = @"Software\Microsoft\Internet Explorer\Main\FeatureControl\";
-		private static readonly string RegistryPathBrowserVersion = @"FEATURE_BROWSER_EMULATION\";
-		private static readonly string RegistryPathGPURendering = @"FEATURE_GPU_RENDERING\";
+		public const string RegistryPathMaster = @"Software\Microsoft\Internet Explorer\Main\FeatureControl\";
+		public const string RegistryPathBrowserVersion = @"FEATURE_BROWSER_EMULATION\";
+		public const  string RegistryPathGPURendering = @"FEATURE_GPU_RENDERING\";
 
-		private static readonly int DefaultBrowserVersion = 7000;
-		private static readonly bool DefaultGPURendering = false;
+		public const int DefaultBrowserVersion = 11001;
+		public const bool DefaultGPURendering = false;
 
 
 		private System.Windows.Forms.Control _UIControl;
@@ -34,13 +33,8 @@ namespace ElectronicObserver.Window.Dialog {
 
 
 		public DialogConfiguration() {
-			this.SuspendLayoutForDpiScale();
 			InitializeComponent();
 
-			// 加载索敌式列表
-			FormFleet_SearchingAbilityMethod.Items.AddRange( Configuration.Config.FormFleet.SearchingAbilities.Split( ';' ) );
-
-			this.ResumeLayoutForDpiScale();
 		}
 
 		public DialogConfiguration( Configuration.ConfigurationData config )
@@ -56,21 +50,6 @@ namespace ElectronicObserver.Window.Dialog {
 
 		}
 
-		private void Connection_UseUpstreamProxy_CheckedChanged( object sender, EventArgs e ) {
-
-		}
-
-		private void Connection_EnableSslUpstreamProxy_CheckedChanged( object sender, EventArgs e ) {
-
-			Connection_UpstreamProxySSLHost.Visible =
-			Connection_UpstreamProxySSLPort.Visible = Connection_EnableSslUpstreamProxy.Checked;
-
-			if ( Connection_EnableSslUpstreamProxy.Checked ) {
-				Connection_UseUpstreamProxy.Checked = true;
-			}
-
-		}
-
 
 		private void Connection_SaveDataPath_TextChanged( object sender, EventArgs e ) {
 
@@ -79,7 +58,7 @@ namespace ElectronicObserver.Window.Dialog {
 				ToolTipInfo.SetToolTip( Connection_SaveDataPath, null );
 			} else {
 				Connection_SaveDataPath.BackColor = Color.MistyRose;
-				ToolTipInfo.SetToolTip( Connection_SaveDataPath, "指定的文件夹不存在。" );
+				ToolTipInfo.SetToolTip( Connection_SaveDataPath, "指定されたフォルダは存在しません。" );
 			}
 		}
 
@@ -91,6 +70,7 @@ namespace ElectronicObserver.Window.Dialog {
 
 			Connection_SaveReceivedData_CheckedChanged( null, new EventArgs() );
 			Connection_SaveDataPath_TextChanged( null, new EventArgs() );
+			Debug_EnableDebugMenu_CheckedChanged( null, new EventArgs() );
 
 		}
 
@@ -214,7 +194,47 @@ namespace ElectronicObserver.Window.Dialog {
 
 
 
+		private void Notification_Expedition_Click( object sender, EventArgs e ) {
 
+			using ( var dialog = new DialogConfigurationNotifier( NotifierManager.Instance.Expedition ) ) {
+				dialog.ShowDialog( this );
+			}
+		}
+
+		private void Notification_Construction_Click( object sender, EventArgs e ) {
+
+			using ( var dialog = new DialogConfigurationNotifier( NotifierManager.Instance.Construction ) ) {
+				dialog.ShowDialog( this );
+			}
+		}
+
+		private void Notification_Repair_Click( object sender, EventArgs e ) {
+
+			using ( var dialog = new DialogConfigurationNotifier( NotifierManager.Instance.Repair ) ) {
+				dialog.ShowDialog( this );
+			}
+		}
+
+		private void Notification_Condition_Click( object sender, EventArgs e ) {
+
+			using ( var dialog = new DialogConfigurationNotifier( NotifierManager.Instance.Condition ) ) {
+				dialog.ShowDialog( this );
+			}
+		}
+
+		private void Notification_Damage_Click( object sender, EventArgs e ) {
+
+			using ( var dialog = new DialogConfigurationNotifier( NotifierManager.Instance.Damage ) ) {
+				dialog.ShowDialog( this );
+			}
+		}
+
+		private void Notification_AnchorageRepair_Click( object sender, EventArgs e ) {
+
+			using ( var dialog = new DialogConfigurationNotifier( NotifierManager.Instance.AnchorageRepair ) ) {
+				dialog.ShowDialog( this );
+			}
+		}
 
 		private void Life_LayoutFilePathSearch_Click( object sender, EventArgs e ) {
 
@@ -222,6 +242,24 @@ namespace ElectronicObserver.Window.Dialog {
 
 		}
 
+
+		private void Debug_APIListPathSearch_Click( object sender, EventArgs e ) {
+
+			Debug_APIListPath.Text = PathHelper.ProcessOpenFileDialog( Debug_APIListPath.Text, APIListBrowser );
+
+		}
+
+
+		private void Debug_EnableDebugMenu_CheckedChanged( object sender, EventArgs e ) {
+
+			Debug_SealingPanel.Visible =
+			Connection_UpstreamProxyAddress.Visible =
+			Connection_DownstreamProxy.Visible =
+			Connection_DownstreamProxyLabel.Visible =
+			SubWindow_Json_SealingPanel.Visible =
+				Debug_EnableDebugMenu.Checked;
+
+		}
 
 
 		private void FormBrowser_ScreenShotPathSearch_Click( object sender, EventArgs e ) {
@@ -248,20 +286,11 @@ namespace ElectronicObserver.Window.Dialog {
 			Connection_SaveOtherFile.Checked = config.Connection.SaveOtherFile;
 			Connection_ApplyVersion.Checked = config.Connection.ApplyVersion;
 			Connection_RegisterAsSystemProxy.Checked = config.Connection.RegisterAsSystemProxy;
-			Connection_EnableSslUpstreamProxy.Checked = config.Connection.EnableSslUpstreamProxy;
 			Connection_UseUpstreamProxy.Checked = config.Connection.UseUpstreamProxy;
-			Connection_UpstreamProxyHost.Text = config.Connection.UpstreamProxyAddress;
 			Connection_UpstreamProxyPort.Value = config.Connection.UpstreamProxyPort;
-            if ( config.Connection.UpstreamProxyPortSSL == 0 ) {
-                Connection_UpstreamProxySSLHost.Text = config.Connection.UpstreamProxyAddress;
-                Connection_UpstreamProxySSLPort.Value = config.Connection.UpstreamProxyPort;
-            } else {
-                Connection_UpstreamProxySSLHost.Text = config.Connection.UpstreamProxyAddressSSL;
-                Connection_UpstreamProxySSLPort.Value = config.Connection.UpstreamProxyPortSSL;
-            }
-			Connection_UpstreamProxySSLHost.Visible =
-			Connection_UpstreamProxySSLPort.Visible = config.Connection.EnableSslUpstreamProxy;
-
+			Connection_UpstreamProxyAddress.Text = config.Connection.UpstreamProxyAddress;
+			Connection_UseSystemProxy.Checked = config.Connection.UseSystemProxy;
+			Connection_DownstreamProxy.Text = config.Connection.DownstreamProxy;
 
 			//[UI]
 			UI_MainFont.Font = config.UI.MainFont.FontData;
@@ -270,56 +299,12 @@ namespace ElectronicObserver.Window.Dialog {
 			UI_SubFont.Text = config.UI.SubFont.SerializeFontAttribute;
 			UI_BarColorMorphing.Checked = config.UI.BarColorMorphing;
 
-			comboUITheme.SelectedIndex = config.UI.ThemeID;
-			colorBackColor.SelectedColor = config.UI.BackColor.ColorData;
-			colorForeColor.SelectedColor = config.UI.ForeColor.ColorData;
-			colorSubForeColor.SelectedColor = config.UI.SubForeColor.ColorData;
-			colorHightlightColor.SelectedColor = config.UI.HighlightColor.ColorData;
-			colorHightlightForeColor.SelectedColor = config.UI.HighlightForeColor.ColorData;
-			colorLineColor.SelectedColor = config.UI.LineColor.ColorData;
-			colorButtonBackColor.SelectedColor = config.UI.ButtonBackColor.ColorData;
-
-			colorFailedColor.SelectedColor = config.UI.FailedColor.ColorData;
-			colorEliteColor.SelectedColor = config.UI.EliteColor.ColorData;
-			colorFlagshipColor.SelectedColor = config.UI.FlagshipColor.ColorData;
-			colorLateModelEliteColor.SelectedColor = config.UI.LateModelEliteColor.ColorData;
-			colorLateModelFlagshipColor.SelectedColor = config.UI.LateModelFlagshipColor.ColorData;
-			colorLateModelColor.SelectedColor = config.UI.LateModelColor.ColorData;
-
-			colorHp0Color.SelectedColor = config.UI.Hp0Color.ColorData;
-			colorHp25Color.SelectedColor = config.UI.Hp25Color.ColorData;
-			colorHp50Color.SelectedColor = config.UI.Hp50Color.ColorData;
-			colorHp75Color.SelectedColor = config.UI.Hp75Color.ColorData;
-			colorHp100Color.SelectedColor = config.UI.Hp100Color.ColorData;
-			colorHpIncrementColor.SelectedColor = config.UI.HpIncrementColor.ColorData;
-			colorDecrementColor.SelectedColor = config.UI.HpDecrementColor.ColorData;
-			colorHpBackgroundColor.SelectedColor = config.UI.HpBackgroundColor.ColorData;
-			numericHpBackgroundOffset.Value = config.UI.HpBackgroundOffset;
-			numericHpThickness.Value = config.UI.HpThickness;
-
-			colorFleetReadyColor.SelectedColor = config.UI.FleetReadyColor.ColorData;
-			colorFleetExpeditionColor.SelectedColor = config.UI.FleetExpeditionColor.ColorData;
-			colorFleetSortieColor.SelectedColor = config.UI.FleetSortieColor.ColorData;
-			colorFleetNotReadyColor.SelectedColor = config.UI.FleetNotReadyColor.ColorData;
-			colorFleetDamageColor.SelectedColor = config.UI.FleetDamageColor.ColorData;
-
-			colorQuestOrganization.SelectedColor = config.UI.QuestOrganization.ColorData;
-			colorQuestSortie.SelectedColor = config.UI.QuestSortie.ColorData;
-			colorQuestExercise.SelectedColor = config.UI.QuestExercise.ColorData;
-			colorQuestExpedition.SelectedColor = config.UI.QuestExpedition.ColorData;
-			colorQuestSupplyDocking.SelectedColor = config.UI.QuestSupplyDocking.ColorData;
-			colorQuestArsenal.SelectedColor = config.UI.QuestArsenal.ColorData;
-			colorQuestRenovated.SelectedColor = config.UI.QuestRenovated.ColorData;
-			colorQuestForeColor.SelectedColor = config.UI.QuestForeColor.ColorData;
-
 			//[ログ]
 			Log_LogLevel.Value = config.Log.LogLevel;
 			Log_SaveLogFlag.Checked = config.Log.SaveLogFlag;
 			Log_SaveErrorReport.Checked = config.Log.SaveErrorReport;
 			Log_FileEncodingID.SelectedIndex = config.Log.FileEncodingID;
 			Log_ShowSpoiler.Checked = config.Log.ShowSpoiler;
-			Log_AutoSave.Checked = config.Log.AutoSave;
-			Log_AutoSaveMinutes.Value = config.Log.AutoSaveMinutes;
 
 			//[動作]
 			Control_ConditionBorder.Value = config.Control.ConditionBorder;
@@ -327,6 +312,11 @@ namespace ElectronicObserver.Window.Dialog {
 			Control_UseSystemVolume.Checked = config.Control.UseSystemVolume;
 			Control_PowerEngagementForm.SelectedIndex = config.Control.PowerEngagementForm - 1;
 
+			//[デバッグ]
+			Debug_EnableDebugMenu.Checked = config.Debug.EnableDebugMenu;
+			Debug_LoadAPIListOnLoad.Checked = config.Debug.LoadAPIListOnLoad;
+			Debug_APIListPath.Text = config.Debug.APIListPath;
+			Debug_AlertOnError.Checked = config.Debug.AlertOnError;
 
 			//[起動と終了]
 			Life_ConfirmOnClosing.Checked = config.Life.ConfirmOnClosing;
@@ -335,24 +325,42 @@ namespace ElectronicObserver.Window.Dialog {
 			Life_CheckUpdateInformation.Checked = config.Life.CheckUpdateInformation;
 			Life_ShowStatusBar.Checked = config.Life.ShowStatusBar;
 			Life_ClockFormat.SelectedIndex = config.Life.ClockFormat;
-			Life_AutoScaleDpi.Checked = config.UI.AutoScaleDpi;
-			Life_LockLayout.Checked = config.Life.IsLocked;
+			Life_LockLayout.Checked = config.Life.LockLayout;
 			Life_CanCloseFloatWindowInLock.Checked = config.Life.CanCloseFloatWindowInLock;
-            Life_ScreenDock.Checked = config.Life.CanScreenDock;
 
-            //[サブウィンドウ]
-            FormFleet_ShowAircraft.Checked = config.FormFleet.ShowAircraft;
+			//[サブウィンドウ]
+			FormArsenal_ShowShipName.Checked = config.FormArsenal.ShowShipName;
+			FormArsenal_BlinkAtCompletion.Checked = config.FormArsenal.BlinkAtCompletion;
+
+			FormDock_BlinkAtCompletion.Checked = config.FormDock.BlinkAtCompletion;
+
+			FormFleet_ShowAircraft.Checked = config.FormFleet.ShowAircraft;
 			FormFleet_SearchingAbilityMethod.SelectedIndex = config.FormFleet.SearchingAbilityMethod;
 			FormFleet_IsScrollable.Checked = config.FormFleet.IsScrollable;
 			FormFleet_FixShipNameWidth.Checked = config.FormFleet.FixShipNameWidth;
 			FormFleet_ShortenHPBar.Checked = config.FormFleet.ShortenHPBar;
 			FormFleet_ShowNextExp.Checked = config.FormFleet.ShowNextExp;
 			FormFleet_EquipmentLevelVisibility.SelectedIndex = (int)config.FormFleet.EquipmentLevelVisibility;
-			FormFleet_BlinkHPBar.Checked = config.UI.NotExpeditionBlink;
-			FormFleet_TextProficiency.Checked = config.FormFleet.ShowTextProficiency;
 			FormFleet_AirSuperiorityMethod.SelectedIndex = config.FormFleet.AirSuperiorityMethod;
 			FormFleet_ShowAnchorageRepairingTimer.Checked = config.FormFleet.ShowAnchorageRepairingTimer;
 			FormFleet_BlinkAtCompletion.Checked = config.FormFleet.BlinkAtCompletion;
+
+			FormHeadquarters_BlinkAtMaximum.Checked = config.FormHeadquarters.BlinkAtMaximum;
+			FormHeadquarters_Visibility.Items.Clear();
+			FormHeadquarters_Visibility.Items.AddRange( FormHeadquarters.GetItemNames().ToArray() );
+			FormHeadquarters.CheckVisibilityConfiguration();
+			for ( int i = 0; i < FormHeadquarters_Visibility.Items.Count; i++ ) {
+				FormHeadquarters_Visibility.SetItemChecked( i, config.FormHeadquarters.Visibility.List[i] );
+			}
+
+			FormQuest_ShowRunningOnly.Checked = config.FormQuest.ShowRunningOnly;
+			FormQuest_ShowOnce.Checked = config.FormQuest.ShowOnce;
+			FormQuest_ShowDaily.Checked = config.FormQuest.ShowDaily;
+			FormQuest_ShowWeekly.Checked = config.FormQuest.ShowWeekly;
+			FormQuest_ShowMonthly.Checked = config.FormQuest.ShowMonthly;
+			FormQuest_ShowOther.Checked = config.FormQuest.ShowOther;
+			FormQuest_ProgressAutoSaving.SelectedIndex = config.FormQuest.ProgressAutoSaving;
+			FormQuest_AllowUserToSortRows.Checked = config.FormQuest.AllowUserToSortRows;
 
 			FormShipGroup_AutoUpdate.Checked = config.FormShipGroup.AutoUpdate;
 			FormShipGroup_ShowStatusBar.Checked = config.FormShipGroup.ShowStatusBar;
@@ -367,12 +375,7 @@ namespace ElectronicObserver.Window.Dialog {
 			FormBrowser_ScreenShotPath.Text = config.FormBrowser.ScreenShotPath;
 			FormBrowser_ConfirmAtRefresh.Checked = config.FormBrowser.ConfirmAtRefresh;
 			FormBrowser_AppliesStyleSheet.Checked = config.FormBrowser.AppliesStyleSheet;
-			FormBrowser_ShowURL.Checked = config.FormBrowser.ShowURL;
-			FormBrowser_ModifyCookieRegion.Checked = config.FormBrowser.ModifyCookieRegion;
 			{
-				FormBrowser_BrowserVersion.Enabled = false;
-				FormBrowser_GPURendering.Enabled = false;
-
 				Microsoft.Win32.RegistryKey reg = null;
 				try {
 
@@ -383,7 +386,6 @@ namespace ElectronicObserver.Window.Dialog {
 					} else {
 						FormBrowser_BrowserVersion.Text = ( reg.GetValue( FormBrowserHost.BrowserExeName ) ?? DefaultBrowserVersion ).ToString();
 					}
-					FormBrowser_BrowserVersion.Enabled = true;
 					if ( reg != null )
 						reg.Close();
 
@@ -395,26 +397,22 @@ namespace ElectronicObserver.Window.Dialog {
 						int? gpu = reg.GetValue( FormBrowserHost.BrowserExeName ) as int?;
 						FormBrowser_GPURendering.Checked = gpu != null ? gpu != 0 : DefaultGPURendering;
 					}
-					FormBrowser_GPURendering.Enabled = true;
 
-				} catch ( Exception ) {
+				} catch ( Exception ex ) {
 
 					FormBrowser_BrowserVersion.Text = DefaultBrowserVersion.ToString();
 					FormBrowser_GPURendering.Checked = DefaultGPURendering;
 
-					//Utility.Logger.Add( 3, "注册表读取失败。" + ex.Message );
+					Utility.Logger.Add( 3, "レジストリからの読み込みに失敗しました。" + ex.Message );
 
 				} finally {
 					if ( reg != null )
 						reg.Close();
 
 				}
-
-				FormBrowser_ApplyRegistry.Enabled = FormBrowser_DeleteRegistry.Enabled =
-					FormBrowser_BrowserVersion.Enabled || FormBrowser_GPURendering.Enabled;
 			}
 			FormBrowser_FlashQuality.Text = config.FormBrowser.FlashQuality;
-			FormBrowser_FlashWMode.Text = config.FormBrowser.FlashWmode;
+			FormBrowser_FlashWMode.Text = config.FormBrowser.FlashWMode;
 			if ( !config.FormBrowser.IsToolMenuVisible )
 				FormBrowser_ToolMenuDockStyle.SelectedIndex = 4;
 			else
@@ -422,7 +420,13 @@ namespace ElectronicObserver.Window.Dialog {
 
 			FormCompass_CandidateDisplayCount.Value = config.FormCompass.CandidateDisplayCount;
 
+			FormJson_AutoUpdate.Checked = config.FormJson.AutoUpdate;
+			FormJson_UpdatesTree.Checked = config.FormJson.UpdatesTree;
+			FormJson_AutoUpdateFilter.Text = config.FormJson.AutoUpdateFilter;
+
 			//[データベース]
+			Database_SendDataToKancolleDB.Checked = config.Connection.SendDataToKancolleDB;
+			Database_SendKancolleOAuth.Text = config.Connection.SendKancolleOAuth;
 
 			//[BGM]
 			BGMPlayer_Enabled.Checked = config.BGMPlayer.Enabled;
@@ -461,22 +465,18 @@ namespace ElectronicObserver.Window.Dialog {
 
 				changed |= config.Connection.UseUpstreamProxy != Connection_UseUpstreamProxy.Checked;
 				config.Connection.UseUpstreamProxy = Connection_UseUpstreamProxy.Checked;
-				changed |= config.Connection.EnableSslUpstreamProxy != Connection_EnableSslUpstreamProxy.Checked;
-				config.Connection.EnableSslUpstreamProxy = Connection_EnableSslUpstreamProxy.Checked;
-                if ( config.Connection.EnableSslUpstreamProxy ) {
-                    changed |= config.Connection.UpstreamProxyAddressSSL != Connection_UpstreamProxySSLHost.Text;
-                    config.Connection.UpstreamProxyAddressSSL = Connection_UpstreamProxySSLPort.Value == 0 ? Connection_UpstreamProxyHost.Text : Connection_UpstreamProxySSLHost.Text;
-                    changed |= config.Connection.UpstreamProxyPortSSL != (ushort)Connection_UpstreamProxySSLPort.Value;
-                    config.Connection.UpstreamProxyPortSSL = Connection_UpstreamProxySSLPort.Value == 0 ? (ushort)Connection_UpstreamProxyPort.Value : (ushort)Connection_UpstreamProxySSLPort.Value;
-                }
-
-                changed |= config.Connection.UpstreamProxyAddress != Connection_UpstreamProxyHost.Text;
-				config.Connection.UpstreamProxyAddress = Connection_UpstreamProxyHost.Text;
 				changed |= config.Connection.UpstreamProxyPort != (ushort)Connection_UpstreamProxyPort.Value;
 				config.Connection.UpstreamProxyPort = (ushort)Connection_UpstreamProxyPort.Value;
+				changed |= config.Connection.UpstreamProxyAddress != Connection_UpstreamProxyAddress.Text;
+				config.Connection.UpstreamProxyAddress = Connection_UpstreamProxyAddress.Text;
+
+				changed |= config.Connection.UseSystemProxy != Connection_UseSystemProxy.Checked;
+				config.Connection.UseSystemProxy = Connection_UseSystemProxy.Checked;
+
+				changed |= config.Connection.DownstreamProxy != Connection_DownstreamProxy.Text;
+				config.Connection.DownstreamProxy = Connection_DownstreamProxy.Text;
 
 				if ( changed ) {
-					APIObserver.Instance.Stop();
 					APIObserver.Instance.Start( config.Connection.Port, _UIControl );
 				}
 
@@ -487,61 +487,12 @@ namespace ElectronicObserver.Window.Dialog {
 			config.UI.SubFont = UI_SubFont.Font;
 			config.UI.BarColorMorphing = UI_BarColorMorphing.Checked;
 
-			config.UI.ThemeID = comboUITheme.SelectedIndex;
-			config.UI.BackColor = colorBackColor.SelectedColor;
-			config.UI.ForeColor = colorForeColor.SelectedColor;
-			config.UI.SubForeColor = colorSubForeColor.SelectedColor;
-			config.UI.HighlightColor = colorHightlightColor.SelectedColor;
-			config.UI.HighlightForeColor = colorHightlightForeColor.SelectedColor;
-			config.UI.LineColor = colorLineColor.SelectedColor;
-			config.UI.ButtonBackColor = colorButtonBackColor.SelectedColor;
-
-			config.UI.FailedColor = colorFailedColor.SelectedColor;
-			config.UI.EliteColor = colorEliteColor.SelectedColor;
-			config.UI.FlagshipColor = colorFlagshipColor.SelectedColor;
-			config.UI.LateModelEliteColor = colorLateModelEliteColor.SelectedColor;
-			config.UI.LateModelFlagshipColor = colorLateModelFlagshipColor.SelectedColor;
-			config.UI.LateModelColor = colorLateModelColor.SelectedColor;
-
-			config.UI.Hp0Color = colorHp0Color.SelectedColor;
-			config.UI.Hp25Color = colorHp25Color.SelectedColor;
-			config.UI.Hp50Color = colorHp50Color.SelectedColor;
-			config.UI.Hp75Color = colorHp75Color.SelectedColor;
-			config.UI.Hp100Color = colorHp100Color.SelectedColor;
-			config.UI.HpIncrementColor = colorHpIncrementColor.SelectedColor;
-			config.UI.HpDecrementColor = colorDecrementColor.SelectedColor;
-			config.UI.HpBackgroundColor = colorHpBackgroundColor.SelectedColor;
-			config.UI.HpBackgroundOffset = (int)numericHpBackgroundOffset.Value;
-			config.UI.HpThickness = (int)numericHpThickness.Value;
-
-			config.UI.FleetReadyColor = colorFleetReadyColor.SelectedColor;
-			config.UI.FleetExpeditionColor = colorFleetExpeditionColor.SelectedColor;
-			config.UI.FleetSortieColor = colorFleetSortieColor.SelectedColor;
-			config.UI.FleetNotReadyColor = colorFleetNotReadyColor.SelectedColor;
-			config.UI.FleetDamageColor = colorFleetDamageColor.SelectedColor;
-
-			config.UI.QuestOrganization = colorQuestOrganization.SelectedColor;
-			config.UI.QuestSortie = colorQuestSortie.SelectedColor;
-			config.UI.QuestExercise = colorQuestExercise.SelectedColor;
-			config.UI.QuestExpedition = colorQuestExpedition.SelectedColor;
-			config.UI.QuestSupplyDocking = colorQuestSupplyDocking.SelectedColor;
-			config.UI.QuestArsenal = colorQuestArsenal.SelectedColor;
-			config.UI.QuestRenovated = colorQuestRenovated.SelectedColor;
-			config.UI.QuestForeColor = colorQuestForeColor.SelectedColor;
-
 			//[ログ]
 			config.Log.LogLevel = (int)Log_LogLevel.Value;
 			config.Log.SaveLogFlag = Log_SaveLogFlag.Checked;
 			config.Log.SaveErrorReport = Log_SaveErrorReport.Checked;
 			config.Log.FileEncodingID = Log_FileEncodingID.SelectedIndex;
 			config.Log.ShowSpoiler = Log_ShowSpoiler.Checked;
-			if ( !config.Log.AutoSave && Log_AutoSave.Checked )
-			{
-				ElectronicObserver.Resource.Record.RecordManager.Instance.Save();
-				ElectronicObserver.Data.KCDatabase.Instance.Save();
-			}
-			config.Log.AutoSave = Log_AutoSave.Checked;
-			config.Log.AutoSaveMinutes = (int)Log_AutoSaveMinutes.Value;
 
 			//[動作]
 			config.Control.ConditionBorder = (int)Control_ConditionBorder.Value;
@@ -549,6 +500,11 @@ namespace ElectronicObserver.Window.Dialog {
 			config.Control.UseSystemVolume = Control_UseSystemVolume.Checked;
 			config.Control.PowerEngagementForm = Control_PowerEngagementForm.SelectedIndex + 1;
 
+			//[デバッグ]
+			config.Debug.EnableDebugMenu = Debug_EnableDebugMenu.Checked;
+			config.Debug.LoadAPIListOnLoad = Debug_LoadAPIListOnLoad.Checked;
+			config.Debug.APIListPath = Debug_APIListPath.Text;
+			config.Debug.AlertOnError = Debug_AlertOnError.Checked;
 
 			//[起動と終了]
 			config.Life.ConfirmOnClosing = Life_ConfirmOnClosing.Checked;
@@ -557,24 +513,42 @@ namespace ElectronicObserver.Window.Dialog {
 			config.Life.CheckUpdateInformation = Life_CheckUpdateInformation.Checked;
 			config.Life.ShowStatusBar = Life_ShowStatusBar.Checked;
 			config.Life.ClockFormat = Life_ClockFormat.SelectedIndex;
-			config.UI.AutoScaleDpi = Life_AutoScaleDpi.Checked;
-			config.Life.IsLocked = Life_LockLayout.Checked;
+			config.Life.LockLayout = Life_LockLayout.Checked;
 			config.Life.CanCloseFloatWindowInLock = Life_CanCloseFloatWindowInLock.Checked;
-            config.Life.CanScreenDock = Life_ScreenDock.Checked;
 
-            //[サブウィンドウ]
-            config.FormFleet.ShowAircraft = FormFleet_ShowAircraft.Checked;
+			//[サブウィンドウ]
+			config.FormArsenal.ShowShipName = FormArsenal_ShowShipName.Checked;
+			config.FormArsenal.BlinkAtCompletion = FormArsenal_BlinkAtCompletion.Checked;
+
+			config.FormDock.BlinkAtCompletion = FormDock_BlinkAtCompletion.Checked;
+
+			config.FormFleet.ShowAircraft = FormFleet_ShowAircraft.Checked;
 			config.FormFleet.SearchingAbilityMethod = FormFleet_SearchingAbilityMethod.SelectedIndex;
 			config.FormFleet.IsScrollable = FormFleet_IsScrollable.Checked;
 			config.FormFleet.FixShipNameWidth = FormFleet_FixShipNameWidth.Checked;
 			config.FormFleet.ShortenHPBar = FormFleet_ShortenHPBar.Checked;
 			config.FormFleet.ShowNextExp = FormFleet_ShowNextExp.Checked;
 			config.FormFleet.EquipmentLevelVisibility = (Window.Control.ShipStatusEquipment.LevelVisibilityFlag)FormFleet_EquipmentLevelVisibility.SelectedIndex;
-			config.UI.NotExpeditionBlink = FormFleet_BlinkHPBar.Checked;
-			config.FormFleet.ShowTextProficiency = FormFleet_TextProficiency.Checked;
 			config.FormFleet.AirSuperiorityMethod = FormFleet_AirSuperiorityMethod.SelectedIndex;
 			config.FormFleet.ShowAnchorageRepairingTimer = FormFleet_ShowAnchorageRepairingTimer.Checked;
 			config.FormFleet.BlinkAtCompletion = FormFleet_BlinkAtCompletion.Checked;
+
+			config.FormHeadquarters.BlinkAtMaximum = FormHeadquarters_BlinkAtMaximum.Checked;
+			{
+				var list = new List<bool>();
+				for ( int i = 0; i < FormHeadquarters_Visibility.Items.Count; i++ )
+					list.Add( FormHeadquarters_Visibility.GetItemChecked( i ) );
+				config.FormHeadquarters.Visibility.List = list;
+			}
+
+			config.FormQuest.ShowRunningOnly = FormQuest_ShowRunningOnly.Checked;
+			config.FormQuest.ShowOnce = FormQuest_ShowOnce.Checked;
+			config.FormQuest.ShowDaily = FormQuest_ShowDaily.Checked;
+			config.FormQuest.ShowWeekly = FormQuest_ShowWeekly.Checked;
+			config.FormQuest.ShowMonthly = FormQuest_ShowMonthly.Checked;
+			config.FormQuest.ShowOther = FormQuest_ShowOther.Checked;
+			config.FormQuest.ProgressAutoSaving = FormQuest_ProgressAutoSaving.SelectedIndex;
+			config.FormQuest.AllowUserToSortRows = FormQuest_AllowUserToSortRows.Checked;
 
 			config.FormShipGroup.AutoUpdate = FormShipGroup_AutoUpdate.Checked;
 			config.FormShipGroup.ShowStatusBar = FormShipGroup_ShowStatusBar.Checked;
@@ -591,10 +565,8 @@ namespace ElectronicObserver.Window.Dialog {
 			config.FormBrowser.ScreenShotPath = FormBrowser_ScreenShotPath.Text;
 			config.FormBrowser.ConfirmAtRefresh = FormBrowser_ConfirmAtRefresh.Checked;
 			config.FormBrowser.AppliesStyleSheet = FormBrowser_AppliesStyleSheet.Checked;
-			config.FormBrowser.ShowURL = FormBrowser_ShowURL.Checked;
-			config.FormBrowser.ModifyCookieRegion = FormBrowser_ModifyCookieRegion.Checked;
 			config.FormBrowser.FlashQuality = FormBrowser_FlashQuality.Text;
-			config.FormBrowser.FlashWmode = FormBrowser_FlashWMode.Text;
+			config.FormBrowser.FlashWMode = FormBrowser_FlashWMode.Text;
 			if ( FormBrowser_ToolMenuDockStyle.SelectedIndex == 4 ) {
 				config.FormBrowser.IsToolMenuVisible = false;
 			} else {
@@ -604,7 +576,13 @@ namespace ElectronicObserver.Window.Dialog {
 
 			config.FormCompass.CandidateDisplayCount = (int)FormCompass_CandidateDisplayCount.Value;
 
+			config.FormJson.AutoUpdate = FormJson_AutoUpdate.Checked;
+			config.FormJson.UpdatesTree = FormJson_UpdatesTree.Checked;
+			config.FormJson.AutoUpdateFilter = FormJson_AutoUpdateFilter.Text;
+
 			//[データベース]
+			config.Connection.SendDataToKancolleDB = Database_SendDataToKancolleDB.Checked;
+			config.Connection.SendKancolleOAuth = Database_SendKancolleOAuth.Text;
 
 			//[BGM]
 			config.BGMPlayer.Enabled = BGMPlayer_Enabled.Checked;
@@ -613,7 +591,6 @@ namespace ElectronicObserver.Window.Dialog {
 			}
 			config.BGMPlayer.Handles = new List<SyncBGMPlayer.SoundHandle>( BGMHandles.Values.ToList() );
 			config.BGMPlayer.SyncBrowserMute = BGMPlayer_SyncBrowserMute.Checked;
-
 		}
 
 
@@ -640,7 +617,7 @@ namespace ElectronicObserver.Window.Dialog {
 
 		private void FormBrowser_ApplyRegistry_Click( object sender, EventArgs e ) {
 
-			if ( MessageBox.Show( "确认写入注册表吗？\r\n＊需要重新启动以完全适用。", "确认",
+			if ( MessageBox.Show( "レジストリに登録します。よろしいですか？\r\n＊完全に適用するには再起動が必要です。", "確認",
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2 )
 				== System.Windows.Forms.DialogResult.Yes ) {
 
@@ -656,8 +633,8 @@ namespace ElectronicObserver.Window.Dialog {
 
 				} catch ( Exception ex ) {
 
-					Utility.ErrorReporter.SendErrorReport( ex, "注册表写入失败。" );
-					MessageBox.Show( "注册表写入失败。\r\n" + ex.Message, "错误", 
+					Utility.ErrorReporter.SendErrorReport( ex, "レジストリへの書き込みに失敗しました。" );
+					MessageBox.Show( "レジストリへの書き込みに失敗しました。\r\n" + ex.Message, "エラー",
 						MessageBoxButtons.OK, MessageBoxIcon.Error );
 
 				} finally {
@@ -670,7 +647,7 @@ namespace ElectronicObserver.Window.Dialog {
 
 		private void FormBrowser_DeleteRegistry_Click( object sender, EventArgs e ) {
 
-			if ( MessageBox.Show( "确认删除注册表项吗？\r\n＊需要重新启动以完全适用。", "确认",
+			if ( MessageBox.Show( "レジストリを削除します。よろしいですか？\r\n＊完全に適用するには再起動が必要です。", "確認",
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2 )
 				== System.Windows.Forms.DialogResult.Yes ) {
 
@@ -686,8 +663,8 @@ namespace ElectronicObserver.Window.Dialog {
 
 				} catch ( Exception ex ) {
 
-					Utility.ErrorReporter.SendErrorReport( ex, "注册表项删除失败。" );
-					MessageBox.Show( "注册表项删除失败。\r\n" + ex.Message, "错误",
+					Utility.ErrorReporter.SendErrorReport( ex, "レジストリの削除に失敗しました。" );
+					MessageBox.Show( "レジストリの削除に失敗しました。\r\n" + ex.Message, "エラー",
 						MessageBoxButtons.OK, MessageBoxIcon.Error );
 
 				} finally {
@@ -697,6 +674,10 @@ namespace ElectronicObserver.Window.Dialog {
 			}
 		}
 
+
+		private void Database_LinkKCDB_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e ) {
+			System.Diagnostics.Process.Start( "http://kancolle-db.net/" );
+		}
 
 
 
@@ -750,5 +731,4 @@ namespace ElectronicObserver.Window.Dialog {
 
 
 	}
-
 }

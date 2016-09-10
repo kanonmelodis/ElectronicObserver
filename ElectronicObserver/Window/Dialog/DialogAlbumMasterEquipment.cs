@@ -1,6 +1,7 @@
 ﻿using ElectronicObserver.Data;
 using ElectronicObserver.Resource;
 using ElectronicObserver.Resource.Record;
+using ElectronicObserver.Utility.Data;
 using ElectronicObserver.Utility.Mathematics;
 using ElectronicObserver.Window.Control;
 using ElectronicObserver.Window.Support;
@@ -35,6 +36,8 @@ namespace ElectronicObserver.Window.Dialog {
 			TitleBomber.ImageList =
 			TitleSpeed.ImageList =
 			TitleRange.ImageList =
+			TitleAircraftCost.ImageList =
+			TitleAircraftDistance.ImageList =
 			Rarity.ImageList =
 			MaterialFuel.ImageList =
 			MaterialAmmo.ImageList =
@@ -55,6 +58,8 @@ namespace ElectronicObserver.Window.Dialog {
 			TitleBomber.ImageIndex = (int)ResourceManager.IconContent.ParameterBomber;
 			TitleSpeed.ImageIndex = (int)ResourceManager.IconContent.ParameterSpeed;
 			TitleRange.ImageIndex = (int)ResourceManager.IconContent.ParameterRange;
+			TitleAircraftCost.ImageIndex = (int)ResourceManager.IconContent.ParameterAircraftCost;
+			TitleAircraftDistance.ImageIndex = (int)ResourceManager.IconContent.ParameterAircraftDistance;
 			MaterialFuel.ImageIndex = (int)ResourceManager.IconContent.ResourceFuel;
 			MaterialAmmo.ImageIndex = (int)ResourceManager.IconContent.ResourceAmmo;
 			MaterialSteel.ImageIndex = (int)ResourceManager.IconContent.ResourceSteel;
@@ -242,6 +247,14 @@ namespace ElectronicObserver.Window.Dialog {
 			SetParameterText( Accuracy, eq.Accuracy );
 			SetParameterText( Bomber, eq.Bomber );
 
+			if ( eq.CategoryType == 48 ) {
+				TitleAccuracy.Text = "対爆";
+				TitleEvasion.Text = "迎撃";
+			} else {
+				TitleAccuracy.Text = "命中";
+				TitleEvasion.Text = "回避";
+			}
+
 			TableParameterMain.ResumeLayout();
 
 
@@ -254,6 +267,19 @@ namespace ElectronicObserver.Window.Dialog {
 			Rarity.ImageIndex = (int)ResourceManager.IconContent.RarityRed + Constants.GetEquipmentRarityID( eq.Rarity );		//checkme
 
 			TableParameterSub.ResumeLayout();
+
+
+			// aircraft
+			if ( Calculator.IsAircraft( equipmentID, true, true ) ) {
+				TableAircraft.SuspendLayout();
+				AircraftCost.Text = eq.AircraftCost.ToString();
+				ToolTipInfo.SetToolTip( AircraftCost, "配備時のボーキ消費：" + ( ( Calculator.IsAircraft( equipmentID, false ) ? 18 : 4 ) * eq.AircraftCost ) );
+				AircraftDistance.Text = eq.AircraftDistance.ToString();
+				TableAircraft.ResumeLayout();
+				TableAircraft.Visible = true;
+			} else {
+				TableAircraft.Visible = false;
+			}
 
 
 			//default equipment
@@ -363,6 +389,9 @@ namespace ElectronicObserver.Window.Dialog {
 			e.Graphics.DrawLine( Pens.Silver, e.CellBounds.X, e.CellBounds.Bottom - 1, e.CellBounds.Right - 1, e.CellBounds.Bottom - 1 );
 		}
 
+		private void TableAircraft_CellPaint( object sender, TableLayoutCellPaintEventArgs e ) {
+			e.Graphics.DrawLine( Pens.Silver, e.CellBounds.X, e.CellBounds.Bottom - 1, e.CellBounds.Right - 1, e.CellBounds.Bottom - 1 );
+		}
 
 
 
@@ -488,6 +517,7 @@ namespace ElectronicObserver.Window.Dialog {
 			ResourceManager.DestroyIcon( Icon );
 
 		}
+
 
 
 	}

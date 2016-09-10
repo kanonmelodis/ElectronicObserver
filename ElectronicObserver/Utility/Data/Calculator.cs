@@ -1,567 +1,253 @@
 ﻿using ElectronicObserver.Data;
 using ElectronicObserver.Resource.Record;
-using Microsoft.CSharp;
+using ElectronicObserver.Utility.Mathematics;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ElectronicObserver.Utility.Data {
 
-	public static class CalculatorEx
-	{
-		static Dictionary<string, MethodInfo> methodInfos;
-		static DateTime dateLast;
-
-		static CalculatorEx()
-		{
-			methodInfos = new Dictionary<string, MethodInfo>();
-			RefreshMethods();
-		}
-
-		private static bool RefreshMethods()
-		{
-			FileInfo file = new FileInfo( "CalculatorEx.cs" );
-			if ( file.Exists && file.LastWriteTime > dateLast )
-			{
-
-				var provider = new CSharpCodeProvider();
-				var parameters = new CompilerParameters()
-				{
-					CompilerOptions = "/target:library /optimize",
-					GenerateExecutable = false,
-					GenerateInMemory = true
-				};
-				if ( File.Exists( "CalculatorEx.lst" ) )
-					parameters.ReferencedAssemblies.AddRange( File.ReadAllLines( "CalculatorEx.lst" ) );
-				parameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
-
-				var result = provider.CompileAssemblyFromFile( parameters, file.FullName );
-				if ( result.Errors.HasErrors )
-				{
-					string err = "Errors:\r\n";
-					foreach ( CompilerError e in result.Errors )
-					{
-						err += "\r\n" + e.ToString();
-					}
-					System.Windows.Forms.MessageBox.Show( err, "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error );
-				}
-				else
-				{
-					dateLast = file.LastWriteTime;
-
-					var ass = result.CompiledAssembly;
-					var type = ass.GetType( "ElectronicObserver.Utility.Data.CalculatorEx" );
-
-					methodInfos.Clear();
-					foreach ( var m in type.GetMethods( BindingFlags.Public | BindingFlags.Static ) )
-					{
-						string key = m.Name;
-						foreach ( var p in m.GetParameters() )
-							key += "," + p.ParameterType.FullName;
-						methodInfos.Add( key, m );
-					}
-				}
-
-				return true;
-			}
-
-			return false;
-		}
-
+	/// <summary>
+	/// 汎用計算クラス
+	/// </summary>
+	public static class Calculator {
 
 		/// <summary>
-		/// 计算我方空母火力
+		/// レベルに依存するパラメータ値を求めます。
 		/// </summary>
-		/// <param name="ship">舰船实体</param>
-		public static double CalculateFire( ShipData ship )
-		{
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "CalculateFire,ElectronicObserver.Data.ShipData", out m ) )
-				return (double)m.Invoke( null, new object[] { ship } );
-
-			return Math.Floor( ( ship.FirepowerTotal + ship.TorpedoTotal + Math.Floor( ship.BombTotal * 1.3 ) ) * 1.5 + 55 );
-		}
-
-		/// <summary>
-		/// 计算敌舰空母火力
-		/// </summary>
-		/// <param name="shipID">敌舰ID</param>
-		/// <param name="slot">装备ID</param>
-		/// <param name="firepower">火力</param>
-		/// <param name="torpedo">雷装</param>
+		/// <param name="min">初期値。</param>
+		/// <param name="max">最大値。</param>
+		/// <param name="lv">レベル。</param>
 		/// <returns></returns>
-		public static double CalculateFireEnemy( int shipID, int[] slot, int firepower, int torpedo )
-		{
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "CalculateFireEnemy,System.Int32,System.Int32[],System.Int32,System.Int32", out m ) )
-				return (double)m.Invoke( null, new object[] { shipID, slot, firepower, torpedo } );
-
-			int fire = firepower;
-			int tor = torpedo;
-			int bomb = 0;
-			if ( slot != null )
-			{
-				for ( int i = 0; i < slot.Length; i++ )
-				{
-					if ( slot[i] != -1 && KCDatabase.Instance.MasterEquipments[slot[i]] != null )
-					{
-						var eqmaster = KCDatabase.Instance.MasterEquipments[slot[i]];
-						fire += eqmaster.Firepower;
-						tor += eqmaster.Torpedo;
-						bomb += eqmaster.Bomber;
-					}
-				}
-			}
-			return Math.Floor( ( fire + tor + Math.Floor( bomb * 1.3 ) ) * 1.5 + 55 );
+		public static int GetParameterFromLevel( int min, int max, int lv ) {
+			return min + ( max - min ) * lv / 99;
 		}
 
 
 
 		/// <summary>
-		/// 计算我方加权对空
+		/// 各装備カテゴリにおける制空値の熟練度ボーナス
 		/// </summary>
-		/// <param name="ship"></param>
-		/// <returns></returns>
-		public static double CalculateWeightingAA( ShipData ship )
-		{
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "CalculateWeightingAA,ElectronicObserver.Data.ShipData", out m ) )
-				return (double)m.Invoke( null, new object[] { ship } );
-
-			double aatotal = ship.AABase;
-			foreach ( var eq in ship.AllSlotInstance )
-			{
-				if ( eq == null )
-					continue;
-
-				int ratio;
-				var eqmaster = eq.MasterEquipment;
-				switch ( eqmaster.IconType )
-				{
-					case 15:	// 对空机枪
-						ratio = 6;
-						break;
-
-					case 16:	// 高角炮
-					case 30:	// 高射装置
-						ratio = 4;
-						break;
-
-					case 11:	// 电探
-						ratio = ( eqmaster.AA > 0 ) ? 3 : 0;
-						break;
-
-					default:
-						ratio = 0;
-						break;
-				}
-				if ( ratio <= 0 )
-					continue;
-
-				aatotal += ratio * ( eqmaster.AA + 0.7 * Math.Sqrt( eq.Level ) );
-			}
-			return aatotal;
-		}
-
-		/// <summary>
-		/// 计算敌方加权对空
-		/// </summary>
-		/// <param name="shipID">敌舰ID</param>
-		/// <param name="slot">装备ID</param>
-		/// <param name="aa">对空</param>
-		public static double CalculateWeightingAAEnemy( int shipID, int[] slot, int aa )
-		{
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "CalculateWeightingAAEnemy,System.Int32,System.Int32[],System.Int32", out m ) )
-				return (double)m.Invoke( null, new object[] { shipID, slot, aa } );
-
-			double aatotal = aa;
-			if ( slot != null )
-			{
-				var slots = slot.Select( id => KCDatabase.Instance.MasterEquipments[id] );
-				foreach ( var eqmaster in slots )
-				{
-					if ( eqmaster == null )
-						continue;
-
-					int ratio;
-					switch ( eqmaster.IconType )
-					{
-						case 15:	// 对空机枪
-							ratio = 6;
-							break;
-
-						case 16:	// 高角炮
-						case 30:	// 高射装置
-							ratio = 4;
-							break;
-
-						case 11:	// 电探
-							ratio = ( eqmaster.AA > 0 ) ? 3 : 0;
-							break;
-
-						default:
-							ratio = 0;
-							break;
-					}
-					if ( ratio <= 0 )
-						continue;
-
-					aatotal += ratio * eqmaster.AA;
-				}
-			}
-			return aatotal / 2;
-		}
-
-
-
-		/// <summary>
-		/// 阵形防空补正系数
-		/// </summary>
-		private static readonly double[] FormationAA = new double[]
-		{
-			45, 35,		// 单纵
-			41,			// 复纵
-			55,			// 轮型
-			35,			// 梯形
-			35,			// 单横
-			0, 0, 0, 0, 0,
-			35,			// 第一警戒航行序列
-			41,			// 第二警戒航行序列
-			55,			// 第三警戒航行序列
-			35			// 第四警戒航行序列
+		private static readonly Dictionary<int, int[]> AircraftLevelBonus = new Dictionary<int, int[]>() {
+			{ 6, new int[] { 0, 0, 2, 5, 9, 14, 14, 22, 22 } },		//艦上戦闘機
+			{ 7, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } },			//艦上爆撃機
+			{ 8, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } },			//艦上攻撃機
+			{ 11, new int[] { 0, 1, 1, 1, 1, 3, 3, 6, 6 } },		//水上爆撃機
+			{ 45, new int[] { 0, 0, 2, 5, 9, 14, 14, 22, 22 } },	//水上戦闘機
+			{ 47, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } },		//陸上攻撃機
+			{ 48, new int[] { 0, 0, 2, 5, 9, 14, 14, 22, 22 } },	//局地戦闘機
 		};
 
 		/// <summary>
-		/// 获取我方舰队防空值
+		/// 艦載機熟練度の内部値テーブル(仮)
 		/// </summary>
-		/// <param name="fleet">舰队实体</param>
-		/// <param name="formation">阵形id</param>
-		public static double GetFleetAAValue( FleetData fleet, int formation )
-		{
-			if ( formation < 0 || formation > 14 )
+		private static readonly List<int> AircraftExpTable = new List<int>() {
+			0, 10, 25, 40, 55, 70, 85, 100, 120
+		};
+
+		/// <summary>
+		/// 各装備カテゴリにおける制空値の改修ボーナス
+		/// </summary>
+		private static readonly Dictionary<int, double> LevelBonus = new Dictionary<int, double>() { 
+			{ 6, 0.2 },		// 艦上戦闘機
+			{ 7, 0.25 },	// 艦上爆撃機
+		};
+
+
+
+		/// <summary>
+		/// 制空戦力を求めます。
+		/// </summary>
+		/// <param name="equipmentID">装備ID。</param>
+		/// <param name="count">搭載機数。</param>
+		/// <param name="aircraftLevel">艦載機熟練度。既定値は 0 です。</param>
+		/// <param name="level">改修レベル。既定値は 0 です。</param>
+		/// <param name="isAirDefense">基地航空隊による防空戦かどうか。</param>
+		/// <returns></returns>
+		public static int GetAirSuperiority( int equipmentID, int count, int aircraftLevel = 0, int level = 0, bool isAirDefense = false ) {
+
+			if ( count <= 0 )
 				return 0;
 
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "GetFleetAAValue,ElectronicObserver.Data.FleetData,System.Int32", out m ) )
-				return (double)m.Invoke( null, new object[] { fleet, formation } );
-
-			double aatotal = fleet.MembersWithoutEscaped.Sum( ship => ship == null ? 0.0 : GetShipAAValue( ship ) );
-			return Math.Floor( aatotal * FormationAA[formation] * 20 / 45 ) / 10;
-		}
-
-		/// <summary>
-		/// 获取我方舰娘防空值
-		/// </summary>
-		/// <param name="ship">舰娘实体</param>
-		public static double GetShipAAValue( ShipData ship )
-		{
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "GetShipAAValue,ElectronicObserver.Data.ShipData", out m ) )
-				return (double)m.Invoke( null, new object[] { ship } );
-
-			double aavalue = 0;
-			foreach ( var eq in ship.AllSlotInstance )
-			{
-				if ( eq == null )
-					continue;
-
-				double ratio;
-				var eqmaster = eq.MasterEquipment;
-				switch ( eqmaster.IconType )
-				{
-					case 1:		// 小口径主炮
-					case 2:		// 中口径主炮
-					case 3:		// 大口径主炮
-					case 4:		// 副炮
-					case 15:	// 对空机枪
-						ratio = 0.2;
-						break;
-
-					case 16:	// 高角炮
-					case 30:	// 高射装置
-						ratio = 0.35;
-						break;
-
-					case 11:	// 电探
-						ratio = ( eqmaster.AA > 0 ) ? 0.4 : 0;
-						break;
-
-					case 12:	// 対空強化弾
-						ratio = 0.6;
-						break;
-
-					default:
-						ratio = 0;
-						break;
-				}
-				if ( ratio <= 0 )
-					continue;
-
-				aavalue += ratio * eqmaster.AA;
-			}
-			return aavalue;
-		}
-
-		/// <summary>
-		/// 获取敌舰队防空值
-		/// </summary>
-		/// <param name="fleet">敌舰成员ID</param>
-		/// <param name="formation">敌舰阵形</param>
-		public static double GetEnemyFleetAAValue( int[] fleet, int formation )
-		{
-			if ( formation < 0 || formation > 14 )
+			var eq = KCDatabase.Instance.MasterEquipments[equipmentID];
+			if ( eq == null )
 				return 0;
 
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "GetEnemyFleetAAValue,System.Int32[],System.Int32", out m ) )
-				return (double)m.Invoke( null, new object[] { fleet, formation } );
+			int category = eq.CategoryType;
+			if ( !AircraftLevelBonus.ContainsKey( category ) )
+				return 0;
 
-			double aatotal = 0;
-			foreach ( var ship in fleet.Select( id => KCDatabase.Instance.MasterShips[id] ) )
-			{
-				if ( ship == null || ship.DefaultSlot == null )
-					continue;
-
-				foreach ( var eqmaster in ship.DefaultSlot.Select( eid => KCDatabase.Instance.MasterEquipments[eid] ) )
-				{
-					if ( eqmaster == null )
-						continue;
-
-					double ratio;
-					switch ( eqmaster.IconType )
-					{
-						case 1:		// 小口径主炮
-						case 2:		// 中口径主炮
-						case 3:		// 大口径主炮
-						case 4:		// 副炮
-						case 15:	// 对空机枪
-							ratio = 0.2;
-							break;
-
-						case 16:	// 高角炮
-						case 30:	// 高射装置
-							ratio = 0.35;
-							break;
-
-						case 11:	// 电探
-							ratio = ( eqmaster.AA > 0 ) ? 0.4 : 0;
-							break;
-
-						case 12:	// 対空強化弾
-							ratio = 0.6;
-							break;
-
-						default:
-							ratio = 0;
-							break;
-					}
-					if ( ratio <= 0 )
-						continue;
-
-					aatotal += ratio * eqmaster.AA;
-				}
-
+			double levelBonus = LevelBonus.ContainsKey( category ) ? LevelBonus[category] : 0;	// 改修レベル補正
+			double interceptorBonus = 0;	// 局地戦闘機の迎撃補正
+			if ( category == 48 ) {
+				if ( isAirDefense )
+					interceptorBonus = eq.Accuracy * 2 + eq.Evasion;
+				else
+					interceptorBonus = eq.Evasion * 1.5;
 			}
-			return Math.Floor( aatotal * FormationAA[formation] * 10 / 45 ) / 10;
+
+
+			return (int)( ( eq.AA + levelBonus * level + interceptorBonus ) * Math.Sqrt( count ) + Math.Sqrt( AircraftExpTable[aircraftLevel] / 10.0 ) + AircraftLevelBonus[category][aircraftLevel] );
 		}
 
 
 
 		/// <summary>
-		/// 计算我方舰队制空值
+		/// 制空戦力を求めます。
 		/// </summary>
-		/// <param name="fleet">舰队实体</param>
-		public static int GetAirSuperiorityEnhance( FleetData fleet )
-		{
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "GetAirSuperiorityEnhance,ElectronicObserver.Data.FleetData", out m ) )
-				return (int)m.Invoke( null, new object[] { fleet } );
+		/// <param name="slot">装備スロット。</param>
+		/// <param name="aircraft">搭載機数の配列。</param>
+		public static int GetAirSuperiority( int[] slot, int[] aircraft ) {
 
+			return slot.Select( ( eq, i ) => GetAirSuperiority( eq, aircraft[i] ) ).Sum();
+		}
+
+		/// <summary>
+		/// 制空戦力を求めます。
+		/// </summary>
+		/// <param name="slot">各スロットの装備IDリスト。</param>
+		/// <param name="aircraft">艦載機搭載量。</param>
+		/// <param name="level">各スロットの艦載機熟練度。</param>
+		/// <returns></returns>
+		public static int GetAirSuperiority( int[] slot, int[] aircraft, int[] level ) {
+
+			return slot.Select( ( eq, i ) => GetAirSuperiority( eq, aircraft[i], level[i] ) ).Sum();
+		}
+
+
+		/// <summary>
+		/// 制空戦力を求めます。
+		/// </summary>
+		/// <param name="fleet">艦船IDの配列。</param>
+		public static int GetAirSuperiority( int[] fleet ) {
+
+			return fleet.Select( id => KCDatabase.Instance.MasterShips[id] ).Sum( ship => GetAirSuperiority( ship ) );
+		}
+
+		/// <summary>
+		/// 制空戦力を求めます。
+		/// </summary>
+		/// <param name="fleet">艦船IDの配列。</param>
+		/// <param name="slot">各艦船の装備スロット。</param>
+		public static int GetAirSuperiority( int[] fleet, int[][] slot ) {
 
 			int air = 0;
+			int length = Math.Min( fleet.Length, slot.GetLength( 0 ) );
 
-			foreach ( var ship in fleet.MembersWithoutEscaped )
-			{
-				if ( ship == null )
-					continue;
+			for ( int i = 0; i < length; i++ ) {
+				ShipDataMaster ship = KCDatabase.Instance.MasterShips[fleet[i]];
+				if ( ship == null ) continue;
 
-				air += GetAirSuperiorityEnhance( ship.SlotInstance.ToArray(), ship.Aircraft.ToArray() );
+				air += GetAirSuperiority( slot[i], ship.Aircraft.ToArray() );
+
 			}
 
 			return air;
 		}
 
+
+
 		/// <summary>
-		/// 获取一些装备的综合制空值
+		/// 制空戦力を求めます。
 		/// </summary>
-		/// <param name="slot">装备实体</param>
-		/// <param name="aircraft">对应搭载量</param>
-		public static int GetAirSuperiorityEnhance( EquipmentData[] slot, int[] aircraft )
-		{
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "GetAirSuperiorityEnhance,ElectronicObserver.Data.EquipmentData[],System.Int32[]", out m ) )
-				return (int)m.Invoke( null, new object[] { slot, aircraft } );
+		/// <param name="ship">対象の艦船。</param>
+		public static int GetAirSuperiority( ShipData ship ) {
 
-			int air = 0;
-			int length = Math.Min( slot.Length, aircraft.Length );
+			if ( ship == null ) return 0;
 
-			for ( int s = 0; s < length; s++ )
-			{
-
-				if ( aircraft[s] <= 0 )
-					continue;
-
-				EquipmentData equip = slot[s];
-				if ( equip == null )
-					continue;
-
-				EquipmentDataMaster eq = equip.MasterEquipment;
-				if ( eq == null )
-					continue;
-
-				switch ( eq.EquipmentType[2] )
-				{
-					case 6:
-					case 7:
-					case 8:
-					case 11:
-					case 45:
-						air += (int)( eq.AA * Math.Sqrt( aircraft[s] ) );
-						if ( equip.AircraftLevel > 0 && equip.AircraftLevel <= 7 )
-							air += Calculator.AircraftLevelBonus[eq.EquipmentType[2]][equip.AircraftLevel];
-						break;
-				}
-			}
-
-			return air;
+			return ship.SlotInstance.Select( ( eq, i ) => eq == null ? 0 : GetAirSuperiority( eq.EquipmentID, ship.Aircraft[i], eq.AircraftLevel, eq.Level ) ).Sum();
 		}
 
 		/// <summary>
-		/// 获取舰队索敌值
+		/// 制空戦力を求めます。
 		/// </summary>
-		/// <param name="fleet">当前舰队</param>
-		/// <param name="searchMethod">索敌公式</param>
+		/// <param name="ship">対象の艦船。</param>
+		public static int GetAirSuperiority( ShipDataMaster ship ) {
+
+			if ( ship == null || ship.DefaultSlot == null ) return 0;
+			return GetAirSuperiority( ship.DefaultSlot.ToArray(), ship.Aircraft.ToArray() );
+
+		}
+
+		/// <summary>
+		/// 制空戦力を求めます。
+		/// </summary>
+		/// <param name="fleet">対象の艦隊。</param>
+		public static int GetAirSuperiority( FleetData fleet ) {
+			if ( fleet == null )
+				return 0;
+			return fleet.MembersWithoutEscaped.Select( ship => GetAirSuperiority( ship ) ).Sum();
+		}
+
+
+		/// <summary>
+		/// 基地航空隊の制空戦力を求めます。
+		/// </summary>
+		/// <param name="aircorps">対象の基地航空隊。</param>
+		public static int GetAirSuperiority( BaseAirCorpsData aircorps ) {
+			if ( aircorps == null )
+				return 0;
+
+			return aircorps.Squadrons.Values.Sum( sq => GetAirSuperiority( sq, aircorps.ActionKind == 2 ) );
+		}
+
+		/// <summary>
+		/// 基地航空中隊の制空戦力を求めます。
+		/// </summary>
+		/// <param name="squadron">対象の基地航空中隊。</param>
+		public static int GetAirSuperiority( BaseAirCorpsSquadron squadron, bool isAirDefense = false ) {
+			if ( squadron == null || squadron.State != 1 )
+				return 0;
+
+			var eq = squadron.EquipmentInstance;
+			if ( eq == null )
+				return 0;
+
+			return GetAirSuperiority( eq.EquipmentID, squadron.AircraftCurrent, eq.AircraftLevel, eq.Level, isAirDefense );
+		}
+
+
+		/// <summary>
+		/// 最大練度の艦載機を搭載している場合の制空戦力を求めます。
+		/// </summary>
+		/// <param name="fleet">艦船IDリスト。</param>
+		/// <param name="slot">各艦の装備IDリスト。</param>
 		/// <returns></returns>
-		public static double GetSearchingAbility( FleetData fleet, int searchMethod ) {
-
-			RefreshMethods();
-			MethodInfo m;
-			if ( methodInfos.TryGetValue( "GetSearchingAbility,ElectronicObserver.Data.FleetData,System.Int32", out m ) )
-				return (double)m.Invoke( null, new object[] { fleet, searchMethod } );
-
-			switch ( searchMethod ) {
-				default:
-				case 0:
-					return GetSearchingAbility_33( fleet );
-
-				case 1:
-					return GetSearchingAbility_Autumn( fleet );
-
-				case 2:
-					return GetSearchingAbility_TinyAutumn( fleet );
-
-				case 3:
-					return GetSearchingAbility_Old( fleet );
-			}
-
+		public static int GetAirSuperiorityAtMaxLevel( int[] fleet, int[][] slot ) {
+			return fleet.Select( id => KCDatabase.Instance.MasterShips[id] )
+				.Select( ( ship, i ) => ship == null ? 0 : GetAirSuperiority( slot[i], ship.Aircraft.ToArray(), new int[] { 8, 8, 8, 8, 8 } ) ).Sum();
 		}
 
 
 		/// <summary>
-		/// 33式索敌公式
+		/// 艦載機熟練度を無視した制空戦力を求めます。
 		/// </summary>
-		/// <param name="fleet"></param>
-		/// <returns></returns>
-		private static double GetSearchingAbility_33( FleetData fleet ) {
-
-			double ret = 0.0;
-
-			var members = fleet.MembersWithoutEscaped;
-			foreach ( var ship in members ) {
-				if ( ship == null )
-					continue;
-
-				ret += Math.Sqrt( ship.LOSBase );
-
-				foreach ( var e in ship.SlotInstance ) {
-					if ( e == null )
-						continue;
-
-					var eq = e.MasterEquipment;
-					if ( eq == null )
-						continue;
-
-					switch ( eq.CategoryType ) {
-
-						case 6:		// 舰上战斗机
-						case 7:		//艦爆
-							ret += eq.LOS * 0.6;
-							break;
-
-						case 8:		//艦攻
-							ret += eq.LOS * 0.8;
-							break;
-
-						case 9:		//艦偵
-							ret += eq.LOS;
-							break;
-
-						case 10:	//水偵
-							ret += ( eq.LOS + 1.2 * Math.Sqrt( e.Level ) ) * 1.2;
-							break;
-
-						case 11:	//水爆
-							ret += eq.LOS * 1.1;
-							break;
-
-						case 12:	//小型電探
-						case 13:	//大型電探
-							ret += ( eq.LOS + 1.25 * Math.Sqrt( e.Level ) ) * 0.6;
-							break;
-
-						case 26:	// 对潜哨戒机
-						case 29:	//探照灯
-						case 34:	// 司令部
-						case 35:	// 航空要员
-						case 39:	// 水上舰要员
-						case 40:	// 大型声纳
-						case 41:	// 大型飞行艇
-						case 42:	// 大型探照灯
-						case 45:	// 水上战斗机
-							ret += eq.LOS * 0.6;
-							break;
-
-					}
-				}
-			}
-
-			ret -= Math.Ceiling( KCDatabase.Instance.Admiral.Level * 0.4 );
-			ret += 2 * ( 6 - members.Count( m => m != null ) );
-
-			return Math.Round( ret, 1 );
+		/// <param name="ship">対象の艦船。</param>
+		public static int GetAirSuperiorityIgnoreLevel( ShipData ship ) {
+			if ( ship == null )
+				return 0;
+			return GetAirSuperiority( ship.SlotMaster.ToArray(), ship.Aircraft.ToArray() );
 		}
+
+		/// <summary>
+		/// 艦載機熟練度を無視した制空戦力を求めます。
+		/// </summary>
+		/// <param name="fleet">対象の艦隊。</param>
+		public static int GetAirSuperiorityIgnoreLevel( FleetData fleet ) {
+			if ( fleet == null )
+				return 0;
+			return fleet.MembersWithoutEscaped.Select( ship => GetAirSuperiorityIgnoreLevel( ship ) ).Sum();
+		}
+
 
 
 		/// <summary>
 		/// 索敵能力を求めます。「2-5式」です。
 		/// </summary>
 		/// <param name="fleet">対象の艦隊。</param>
-		private static int GetSearchingAbility_Old( FleetData fleet ) {
+		public static int GetSearchingAbility_Old( FleetData fleet ) {
 
 			KCDatabase db = KCDatabase.Instance;
 
@@ -580,8 +266,7 @@ namespace ElectronicObserver.Utility.Data {
 
 				for ( int j = 0; j < slot.Count; j++ ) {
 
-					if ( slot[j] == null )
-						continue;
+					if ( slot[j] == null ) continue;
 
 					switch ( slot[j].EquipmentType[2] ) {
 						case 9:		//艦偵
@@ -612,53 +297,43 @@ namespace ElectronicObserver.Utility.Data {
 		/// 索敵能力を求めます。「2-5式(秋)」です。
 		/// </summary>
 		/// <param name="fleet">対象の艦隊。</param>
-		private static double GetSearchingAbility_Autumn( FleetData fleet ) {
+		public static double GetSearchingAbility_Autumn( FleetData fleet ) {
 
 			double ret = 0.0;
 
 			foreach ( var ship in fleet.MembersWithoutEscaped ) {
-				if ( ship == null )
-					continue;
+				if ( ship == null ) continue;
 
 				ret += Math.Sqrt( ship.LOSBase ) * 1.6841056;
 
 				foreach ( var eq in ship.SlotInstanceMaster ) {
-					if ( eq == null )
-						continue;
+					if ( eq == null ) continue;
 
 					switch ( eq.CategoryType ) {
 
 						case 7:		//艦爆
-							ret += eq.LOS * 1.0376255;
-							break;
+							ret += eq.LOS * 1.0376255; break;
 
 						case 8:		//艦攻
-							ret += eq.LOS * 1.3677954;
-							break;
+							ret += eq.LOS * 1.3677954; break;
 
 						case 9:		//艦偵
-							ret += eq.LOS * 1.6592780;
-							break;
+							ret += eq.LOS * 1.6592780; break;
 
 						case 10:	//水偵
-							ret += eq.LOS * 2.0000000;
-							break;
+							ret += eq.LOS * 2.0000000; break;
 
 						case 11:	//水爆
-							ret += eq.LOS * 1.7787282;
-							break;
+							ret += eq.LOS * 1.7787282; break;
 
 						case 12:	//小型電探
-							ret += eq.LOS * 1.0045358;
-							break;
+							ret += eq.LOS * 1.0045358; break;
 
 						case 13:	//大型電探
-							ret += eq.LOS * 0.9906638;
-							break;
+							ret += eq.LOS * 0.9906638; break;
 
 						case 29:	//探照灯
-							ret += eq.LOS * 0.9067950;
-							break;
+							ret += eq.LOS * 0.9067950; break;
 
 					}
 				}
@@ -674,57 +349,46 @@ namespace ElectronicObserver.Utility.Data {
 		/// 索敵能力を求めます。「2-5式(秋)簡易式」です。
 		/// </summary>
 		/// <param name="fleet">対象の艦隊。</param>
-		private static double GetSearchingAbility_TinyAutumn( FleetData fleet ) {
+		public static double GetSearchingAbility_TinyAutumn( FleetData fleet ) {
 
 			double ret = 0.0;
 
 			foreach ( var ship in fleet.MembersWithoutEscaped ) {
-				if ( ship == null )
-					continue;
+				if ( ship == null ) continue;
 
 				double cur = Math.Sqrt( ship.LOSBase );
 
 				foreach ( var eq in ship.SlotInstanceMaster ) {
-					if ( eq == null )
-						continue;
+					if ( eq == null ) continue;
 
 					switch ( eq.CategoryType ) {
 
 						case 7:		//艦爆
-							cur += eq.LOS * 0.6;
-							break;
+							cur += eq.LOS * 0.6; break;
 
 						case 8:		//艦攻
-							cur += eq.LOS * 0.8;
-							break;
+							cur += eq.LOS * 0.8; break;
 
 						case 9:		//艦偵
-							cur += eq.LOS * 1.0;
-							break;
+							cur += eq.LOS * 1.0; break;
 
 						case 10:	//水偵
-							cur += eq.LOS * 1.2;
-							break;
+							cur += eq.LOS * 1.2; break;
 
 						case 11:	//水爆
-							cur += eq.LOS * 1.0;
-							break;
+							cur += eq.LOS * 1.0; break;
 
 						case 12:	//小型電探
-							cur += eq.LOS * 0.6;
-							break;
+							cur += eq.LOS * 0.6; break;
 
 						case 13:	//大型電探
-							cur += eq.LOS * 0.6;
-							break;
+							cur += eq.LOS * 0.6; break;
 
 						case 29:	//探照灯
-							cur += eq.LOS * 0.5;
-							break;
+							cur += eq.LOS * 0.5; break;
 
 						default:	//その他
-							cur += eq.LOS * 0.5;
-							break;
+							cur += eq.LOS * 0.5; break;
 					}
 				}
 
@@ -735,260 +399,6 @@ namespace ElectronicObserver.Utility.Data {
 
 			return Math.Round( ret, 1 );
 		}
-	}
-
-	/// <summary>
-	/// 汎用計算クラス
-	/// </summary>
-	public static class Calculator {
-
-		/// <summary>
-		/// レベルに依存するパラメータ値を求めます。
-		/// </summary>
-		/// <param name="min">初期値。</param>
-		/// <param name="max">最大値。</param>
-		/// <param name="lv">レベル。</param>
-		/// <returns></returns>
-		public static int GetParameterFromLevel( int min, int max, int lv ) {
-			return min + ( max - min ) * lv / 99;
-		}
-
-
-
-
-		/// <summary>
-		/// 制空戦力を求めます。
-		/// </summary>
-		/// <param name="slot">装備スロット。</param>
-		/// <param name="aircraft">艦載機搭載量の配列。</param>
-		public static int GetAirSuperiority( int[] slot, int[] aircraft ) {
-
-			int air = 0;
-			int length = Math.Min( slot.Length, aircraft.Length );
-
-			for ( int s = 0; s < length; s++ ) {
-
-				if ( aircraft[s] < 0 )
-					continue;
-
-				EquipmentDataMaster eq = KCDatabase.Instance.MasterEquipments[slot[s]];
-
-				if ( eq == null ) continue;
-
-				switch ( eq.EquipmentType[2] ) {
-					case 6:		// 艦上戦闘機
-					case 7:		// 艦上爆撃機
-					case 8:		// 艦上攻撃機
-					case 11:	// 水上爆撃機
-					case 45:	// 水上戦闘機
-						air += (int)( eq.AA * Math.Sqrt( aircraft[s] ) );
-						break;
-				}
-			}
-
-			return air;
-		}
-
-		/// <summary>
-		/// 制空戦力を求めます。
-		/// </summary>
-		/// <param name="fleet">艦船IDの配列。</param>
-		public static int GetAirSuperiority( int[] fleet ) {
-
-			int air = 0;
-
-			for ( int i = 0; i < fleet.Length; i++ ) {
-				ShipDataMaster ship = KCDatabase.Instance.MasterShips[fleet[i]];
-				if ( ship == null ) continue;
-
-				air += GetAirSuperiority( ship );
-			}
-
-			return air;
-		}
-
-		/// <summary>
-		/// 制空戦力を求めます。
-		/// </summary>
-		/// <param name="fleet">艦船IDの配列。</param>
-		/// <param name="slot">各艦船の装備スロット。</param>
-		public static int GetAirSuperiority( int[] fleet, int[][] slot ) {
-
-			int air = 0;
-			int length = Math.Min( fleet.Length, slot.GetLength( 0 ) );
-
-			for ( int i = 0; i < length; i++ ) {
-				ShipDataMaster ship = KCDatabase.Instance.MasterShips[fleet[i]];
-				if ( ship == null ) continue;
-
-				air += GetAirSuperiority( slot[i], ship.Aircraft.ToArray() );
-
-			}
-
-			return air;
-		}
-
-
-		/// <summary>
-		/// 各装備カテゴリにおける制空値の熟練度ボーナス
-		/// </summary>
-		public static readonly Dictionary<int, int[]> AircraftLevelBonus = new Dictionary<int, int[]>() {
-            { 6, new int[] { 0, 0, 2, 5, 9, 14, 14, 22, 22 } },		//艦上戦闘機
-			{ 7, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } },			//艦上爆撃機
-			{ 8, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } },			//艦上攻撃機
-			{ 11, new int[] { 0, 1, 1, 1, 1, 3, 3, 6, 6 } },		//水上爆撃機
-			{ 45, new int[] { 0, 0, 2, 5, 9, 14, 14, 22, 22 } },	//水上戦闘機
-		};
-
-		/// <summary>
-		/// 艦載機熟練度の内部値テーブル(仮)
-		/// </summary>
-		private static readonly List<int> AircraftExpTable = new List<int>() {
-			0, 10, 25, 40, 55, 70, 85, 100, 120
-		};
-
-
-		/// <summary>
-		/// 制空戦力を求めます。
-		/// </summary>
-		/// <param name="ship">対象の艦船。</param>
-        public static int GetAirSuperiority(ShipData ship, int FullExp = 0)
-        {
-
-            if (ship == null) return 0;
-
-            if (Utility.Configuration.Config.FormFleet.AirSuperiorityMethod == 0)
-            {
-                return GetAirSuperiority(ship.SlotMaster.ToArray(), ship.Aircraft.ToArray());
-            }
-
-            int air = 0;
-            var eqs = ship.SlotInstance;
-            var aircrafts = ship.Aircraft;
-
-
-            for (int i = 0; i < eqs.Count; i++)
-            {
-                var eq = eqs[i];
-                if (eq != null && aircrafts[i] > 0)
-                {
-
-                    int category = eq.MasterEquipment.CategoryType;
-
-                    if (AircraftLevelBonus.ContainsKey(category))
-                    {
-
-                        double levelRate;
-                        switch (category)
-                        {
-                            case 6:     // 艦上戦闘機
-                                levelRate = 0.2;
-                                break;
-                            case 7:     // 艦上爆撃機
-                                levelRate = 0.25;
-                                break;
-                            default:
-                                levelRate = 0;
-                                break;
-                        }
-
-                        air += (int)((eq.MasterEquipment.AA + levelRate * eq.Level) * Math.Sqrt(aircrafts[i]) + Math.Sqrt(AircraftExpTable[eq.AircraftLevel] / 10.0) + AircraftLevelBonus[category][eq.AircraftLevel]);
-                    }
-
-                }
-            }
-
-            return air;
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="category">装备类别</param>
-        /// <param name="CategoryTypeList">1+2+4+8=舰战,舰爆,舰攻,水爆</param>
-        /// <returns></returns>
-        static bool CheckCategoryType(int category, int CategoryTypeList)
-        {
-           switch(category)
-           {
-               case 6:
-                   return (CategoryTypeList & 1) > 0;
-               case 7:
-                   return (CategoryTypeList & 2) > 0;
-               case 8:
-                   return (CategoryTypeList & 4) > 0;
-               case 11:
-                   return (CategoryTypeList & 8) > 0;
-               default:
-                   return false;
-           }
-        }
-		/// <summary>
-		/// 制空戦力を求めます。
-		/// </summary>
-		/// <param name="slot">各スロットの装備IDリスト。</param>
-		/// <param name="aircraft">艦載機搭載量。</param>
-		/// <param name="level">各スロットの艦載機熟練度。</param>
-		/// <returns></returns>
-		public static int GetAirSuperiority( int[] slot, int[] aircraft, int[] level ) {
-            int air = 0;
-
-            for (int i = 0; i < aircraft.Length; i++)
-            {
-                var eq = KCDatabase.Instance.MasterEquipments[slot[i]];
-                if (eq == null || aircraft[i] == 0) continue;
-
-                int category = eq.CategoryType;
-                if (AircraftLevelBonus.ContainsKey(category))
-                {
-                    air += (int)(eq.AA * Math.Sqrt(aircraft[i]) + Math.Sqrt(AircraftExpTable[level[i]] / 10.0) + AircraftLevelBonus[category][level[i]]);
-                }
-            }
-
-            return air;
-        }
-
-
-		/// <summary>
-		/// 最大練度の艦載機を搭載している場合の制空戦力を求めます。
-		/// </summary>
-		/// <param name="fleet">艦船IDリスト。</param>
-		/// <param name="slot">各艦の装備IDリスト。</param>
-		/// <returns></returns>
-		public static int GetAirSuperiorityAtMaxLevel( int[] fleet, int[][] slot ) {
-			return fleet.Select( id => KCDatabase.Instance.MasterShips[id] )
-				.Select( ( ship, i ) => ship == null ? 0 : GetAirSuperiority( slot[i], ship.Aircraft.ToArray(), new int[] { 8, 8, 8, 8, 8 } ) ).Sum();
-		}
-
-		/// <summary>
-		/// 制空戦力を求めます。
-		/// </summary>
-		/// <param name="ship">対象の艦船。</param>
-		public static int GetAirSuperiority( ShipDataMaster ship ) {
-
-			if ( ship.DefaultSlot == null ) return 0;
-			return GetAirSuperiority( ship.DefaultSlot.ToArray(), ship.Aircraft.ToArray() );
-
-		}
-
-		/// <summary>
-		/// 制空戦力を求めます。
-		/// </summary>
-		/// <param name="fleet">対象の艦隊。</param>
-        public static int GetAirSuperiority(FleetData fleet, int FullExp = 0)
-        {
-
-            int air = 0;
-
-            foreach (var ship in fleet.MembersWithoutEscaped)
-            {
-                if (ship == null) continue;
-
-                air += GetAirSuperiority(ship, FullExp);
-            }
-
-            return air;
-        }
-
 
 
 		/// <summary>
@@ -1136,7 +546,10 @@ namespace ElectronicObserver.Utility.Data {
 					switch ( eq.CategoryType ) {
 
 						case 24:	// 上陸用舟艇
-							tp += 8;
+							if ( eq.EquipmentID == 166 )	// 陸戦隊
+								tp += 13;
+							else
+								tp += 8;
 							break;
 						case 30:	// 簡易輸送部材
 							tp += 5;
@@ -1145,7 +558,7 @@ namespace ElectronicObserver.Utility.Data {
 							tp += 1;
 							break;
 						case 46:	// 特型内火艇
-							tp += 2;
+							tp += 10;
 							break;
 					}
 				}
@@ -1193,6 +606,17 @@ namespace ElectronicObserver.Utility.Data {
 
 
 		/// <summary>
+		/// ハードスキン型陸上基地の名前リスト
+		/// IDではなく名前なのは本家の処理に倣ったため
+		/// </summary>
+		private static readonly HashSet<string> HardInstallationNames = new HashSet<string>() { 
+			"離島棲姫",
+			"砲台小鬼",
+			"集積地棲姫",
+			"集積地棲姫-壊",
+		};
+
+		/// <summary>
 		/// 昼戦における攻撃種別を取得します。
 		/// </summary>
 		/// <param name="slot">攻撃艦のスロット(マスターID)。</param>
@@ -1207,6 +631,8 @@ namespace ElectronicObserver.Utility.Data {
 			int apshellcnt = 0;
 			int radarcnt = 0;
 			int rocketcnt = 0;
+			int landingcnt = 0;
+			int uchibicnt = 0;
 
 			if ( slot == null ) return -1;
 
@@ -1218,27 +644,34 @@ namespace ElectronicObserver.Utility.Data {
 				int eqtype = eq.CategoryType;
 
 				switch ( eqtype ) {
-					case 1:
-					case 2:
-					case 3:
+					case 1:		// 小口径主砲
+					case 2:		// 中口径主砲
+					case 3:		// 大口径主砲
 						mainguncnt++;
 						break;
-					case 4:
+					case 4:		// 副砲
 						subguncnt++;
 						break;
-					case 10:
-					case 11:
+					case 10:	// 水上偵察機
+					case 11:	// 水上爆撃機
 						reconcnt++;
 						break;
-					case 12:
-					case 13:
+					case 12:	// 小型電探
+					case 13:	// 大型電探
 						radarcnt++;
 						break;
-					case 19:
+					case 19:	// 対艦強化弾
 						apshellcnt++;
 						break;
-					case 37:
+					case 24:	// 上陸用舟艇
+						if ( eq.EquipmentID == 166 )		// 陸戦隊
+							landingcnt++;
+						break;
+					case 37:	// 対地装備
 						rocketcnt++;
+						break;
+					case 46:	// 特型内火艇
+						uchibicnt++;
 						break;
 				}
 			}
@@ -1262,10 +695,20 @@ namespace ElectronicObserver.Utility.Data {
 
 			if ( atkship != null ) {
 
-				if ( defship != null && defship.IsLandBase && rocketcnt > 0 )
-					return 10;		//ロケット砲撃
+				if ( defship != null ) {
 
-				else if ( attackerShipID == 352 ) {	//速吸改
+					if ( uchibicnt > 0 && ( ( ( atkship.ShipType == 13 || atkship.ShipType == 14 ) && defship.IsLandBase ) || HardInstallationNames.Contains( defship.Name ) ) )
+						return 12;		// 揚陸攻撃(内火艇)
+
+					if ( landingcnt > 0 && HardInstallationNames.Contains( defship.Name ) )
+						return 11;		// 揚陸攻撃(大発動艇)
+
+					if ( rocketcnt > 0 && defship.IsLandBase )
+						return 10;		//ロケット砲撃
+				}
+
+
+				if ( attackerShipID == 352 ) {	//速吸改
 
 					if ( defship != null && ( defship.ShipType == 13 || defship.ShipType == 14 ) ) {
 						if ( slot.Select( id => KCDatabase.Instance.MasterEquipments[id] )
@@ -1295,7 +738,7 @@ namespace ElectronicObserver.Utility.Data {
 
 			}
 
-			return 0;
+			return 0;		//砲撃
 		}
 
 
@@ -1305,12 +748,15 @@ namespace ElectronicObserver.Utility.Data {
 		/// <param name="slot">攻撃艦のスロット(マスターID)。</param>
 		/// <param name="attackerShipID">攻撃艦の艦船ID。</param>
 		/// <param name="defenerShipID">防御艦の艦船ID。なければ-1</param>
-		public static int GetNightAttackKind( int[] slot, int attackerShipID, int defenerShipID ) {
+		/// <param name="includeSpecialAttack">カットイン/連撃の判定を含むか。falseなら除外して計算</param>
+		public static int GetNightAttackKind( int[] slot, int attackerShipID, int defenerShipID, bool includeSpecialAttack = true ) {
 
 			int mainguncnt = 0;
 			int subguncnt = 0;
 			int torpcnt = 0;
 			int rocketcnt = 0;
+			int landingcnt = 0;
+			int uchibicnt = 0;
 
 			if ( slot == null ) return -1;
 
@@ -1340,18 +786,22 @@ namespace ElectronicObserver.Utility.Data {
 			}
 
 
-			if ( torpcnt >= 2 )
-				return 3;			//カットイン(魚雷/魚雷)
-			else if ( mainguncnt >= 3 )
-				return 5;			//カットイン(主砲x3)
-			else if ( mainguncnt == 2 && subguncnt > 0 )
-				return 4;			//カットイン(主砲x2/副砲)
-			else if ( ( mainguncnt == 2 && subguncnt == 0 && torpcnt == 1 ) || ( mainguncnt == 1 && torpcnt == 1 ) )
-				return 2;			//カットイン(主砲/魚雷)
-			else if ( ( mainguncnt == 2 && subguncnt == 0 & torpcnt == 0 ) ||
-				( mainguncnt == 1 && subguncnt > 0 ) ||
-				( subguncnt >= 2 && torpcnt <= 1 ) ) {
-				return 1;			//連撃
+			if ( includeSpecialAttack ) {
+
+				if ( torpcnt >= 2 )
+					return 3;			//カットイン(魚雷/魚雷)
+				else if ( mainguncnt >= 3 )
+					return 5;			//カットイン(主砲x3)
+				else if ( mainguncnt == 2 && subguncnt > 0 )
+					return 4;			//カットイン(主砲x2/副砲)
+				else if ( ( mainguncnt == 2 && subguncnt == 0 && torpcnt == 1 ) || ( mainguncnt == 1 && torpcnt == 1 ) )
+					return 2;			//カットイン(主砲/魚雷)
+				else if ( ( mainguncnt == 2 && subguncnt == 0 & torpcnt == 0 ) ||
+					( mainguncnt == 1 && subguncnt > 0 ) ||
+					( subguncnt >= 2 && torpcnt <= 1 ) ) {
+					return 1;			//連撃
+				}
+
 			}
 
 
@@ -1360,12 +810,24 @@ namespace ElectronicObserver.Utility.Data {
 
 			if ( atkship != null ) {
 
-				if ( defship != null && defship.IsLandBase && rocketcnt > 0 )
-					return 10;		//ロケット砲撃
+				if ( defship != null ) {
 
-				else if ( atkship.ShipType == 7 || atkship.ShipType == 11 || atkship.ShipType == 18 ) {		//軽空母/正規空母/装甲空母
+					if ( uchibicnt > 0 && ( ( ( atkship.ShipType == 13 || atkship.ShipType == 14 ) && defship.IsLandBase ) || HardInstallationNames.Contains( defship.Name ) ) )
+						return 12;		// 揚陸攻撃(内火艇)
+
+					if ( landingcnt > 0 && HardInstallationNames.Contains( defship.Name ) )
+						return 11;		// 揚陸攻撃(大発動艇)
+
+					if ( rocketcnt > 0 && defship.IsLandBase )
+						return 10;		//ロケット砲撃
+				}
+
+
+				if ( atkship.ShipType == 7 || atkship.ShipType == 11 || atkship.ShipType == 18 ) {		//軽空母/正規空母/装甲空母
 
 					if ( attackerShipID == 432 || attackerShipID == 353 )		//Graf Zeppelin(改)
+						return 0;		//砲撃
+					else if ( atkship.Name == "リコリス棲姫" )
 						return 0;		//砲撃
 					else
 						return 7;		//空撃
@@ -1382,7 +844,7 @@ namespace ElectronicObserver.Utility.Data {
 
 				else if ( slot.Length > 0 ) {
 					EquipmentDataMaster eq = KCDatabase.Instance.MasterEquipments[slot[0]];
-					if ( eq != null && eq.EquipmentType[2] == 5 ) {		//最初のスロット==魚雷		(本来の判定とは微妙に異なるが無問題)
+					if ( eq != null && ( eq.CategoryType == 5 || eq.CategoryType == 32 ) ) {		//最初のスロット==魚雷		(本来の判定とは微妙に異なるが無問題)
 						return 9;		//雷撃
 					}
 				}
@@ -1438,8 +900,8 @@ namespace ElectronicObserver.Utility.Data {
 					aashell++;
 
 				} else if ( eq.CategoryType == 21 ) {	//対空機銃
-					// 25mm三連装機銃 集中配備 or Bofors 40mm四連装機関砲
-					if ( eq.EquipmentID == 131 || eq.EquipmentID == 173 ) {
+					// 25mm三連装機銃 集中配備 or Bofors 40mm四連装機関砲 or QF 2ポンド8連装ポンポン砲
+					if ( eq.EquipmentID == 131 || eq.EquipmentID == 173 || eq.EquipmentID == 191 ) {
 						aagun_concentrated++;
 					}
 					aagun++;
@@ -1551,6 +1013,8 @@ namespace ElectronicObserver.Utility.Data {
 				case 25:	//オートジャイロ
 				case 26:	//対潜哨戒機
 				case 45:	//水上戦闘機
+				case 47:	//陸上攻撃機
+				case 48:	//局地戦闘機
 					return true;
 
 				case 9:		//艦上偵察機
@@ -1592,6 +1056,11 @@ namespace ElectronicObserver.Utility.Data {
 					return false;
 			}
 
+		}
+
+
+		public static TimeSpan CalculateDockingUnitTime( ShipData ship ) {
+			return new TimeSpan( DateTimeHelper.FromAPITimeSpan( ship.RepairTime ).Add( TimeSpan.FromSeconds( -30 ) ).Ticks / ( ship.HPMax - ship.HPCurrent ) );
 		}
 
 	}

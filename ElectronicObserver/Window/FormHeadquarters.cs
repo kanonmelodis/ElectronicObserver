@@ -14,8 +14,6 @@ using WeifenLuo.WinFormsUI.Docking;
 using ElectronicObserver.Utility.Data;
 using ElectronicObserver.Window.Support;
 using ElectronicObserver.Resource.Record;
-using System.IO;
-using Codeplex.Data;
 
 namespace ElectronicObserver.Window {
 
@@ -28,7 +26,8 @@ namespace ElectronicObserver.Window {
 
 			_parentForm = parent;
 
-			ImageCollection icons = ResourceManager.Instance.Icons;
+
+			ImageList icons = ResourceManager.Instance.Icons;
 
 			ShipCount.ImageList = icons;
 			ShipCount.ImageIndex = (int)ResourceManager.IconContent.HeadQuartersShip;
@@ -93,6 +92,8 @@ namespace ElectronicObserver.Window {
 			o.APIList["api_req_kousyou/remodel_slot"].ResponseReceived += Updated;
 			o.APIList["api_get_member/material"].ResponseReceived += Updated;
 			o.APIList["api_get_member/ship_deck"].ResponseReceived += Updated;
+			o.APIList["api_req_air_corps/set_plane"].ResponseReceived += Updated;
+			o.APIList["api_req_air_corps/supply"].ResponseReceived += Updated;
 
 
 			Utility.Configuration.Instance.ConfigurationChanged += ConfigurationChanged;
@@ -100,69 +101,10 @@ namespace ElectronicObserver.Window {
 
 			FlowPanelResource.SetFlowBreak( Ammo, true );
 
-			// custom flow break/visible
-			CustomFlowSettings();
-
 			FlowPanelMaster.Visible = false;
 
 		}
 
-		void CustomFlowSettings()
-		{
-			var settings = Headquarters.Settings.settings;
-
-			if ( settings == null )
-			{
-				try
-				{
-					if ( File.Exists( Headquarters.Settings.PLUGIN_SETTINGS ) )
-						settings = DynamicJson.Parse( File.ReadAllText( Headquarters.Settings.PLUGIN_SETTINGS ) );
-					else
-						settings = DynamicJson.Parse( Headquarters.Settings.DEFAULT_SETTINGS );
-				}
-				catch
-				{
-					settings = DynamicJson.Parse( Headquarters.Settings.DEFAULT_SETTINGS );
-				}
-
-				Headquarters.Settings.settings = settings;
-            }
-
-			if ( settings != null )
-			{
-				AdmiralName.Visible = settings.AdmiralName.show;
-				//FlowPanelAdmiral.SetFlowBreak( AdmiralName, settings.AdmiralName.@break );
-
-				AdmiralComment.Visible = settings.AdmiralComment.show;
-				//FlowPanelMaster.SetFlowBreak( FlowPanelAdmiral, settings.AdmiralComment.@break );
-
-				HQLevel.Visible = settings.HQLevel.show;
-				//FlowPanelMaster.SetFlowBreak( HQLevel, settings.HQLevel.@break );
-
-				ShipCount.Visible = settings.ShipCount.show;
-				//FlowPanelFleet.SetFlowBreak( ShipCount, settings.ShipCount.@break );
-
-				EquipmentCount.Visible = settings.EquipmentCount.show;
-				//FlowPanelMaster.SetFlowBreak( FlowPanelFleet, settings.EquipmentCount.@break );
-
-				InstantRepair.Visible = settings.InstantRepair.show;
-				//FlowPanelUseItem.SetFlowBreak( InstantRepair, settings.InstantRepair.@break );
-
-				InstantConstruction.Visible = settings.InstantConstruction.show;
-				//FlowPanelUseItem.SetFlowBreak( InstantConstruction, settings.InstantConstruction.@break );
-
-				DevelopmentMaterial.Visible = settings.DevelopmentMaterial.show;
-				//FlowPanelUseItem.SetFlowBreak( DevelopmentMaterial, settings.DevelopmentMaterial.@break );
-
-				ModdingMaterial.Visible = settings.ModdingMaterial.show;
-				//FlowPanelUseItem.SetFlowBreak( ModdingMaterial, settings.ModdingMaterial.@break );
-
-				FurnitureCoin.Visible = settings.FurnitureCoin.show;
-				//FlowPanelMaster.SetFlowBreak( FlowPanelUseItem, settings.FurnitureCoin.@break );
-
-				FlowPanelResource.Visible = settings.Resources.show;
-			}
-		}
 
 
 		void ConfigurationChanged() {
@@ -170,24 +112,77 @@ namespace ElectronicObserver.Window {
 			Font = FlowPanelMaster.Font = Utility.Configuration.Config.UI.MainFont;
 			HQLevel.MainFont = Utility.Configuration.Config.UI.MainFont;
 			HQLevel.SubFont = Utility.Configuration.Config.UI.SubFont;
-			HQLevel.MainFontColor = Utility.Configuration.Config.UI.ForeColor;
-			HQLevel.SubFontColor = Utility.Configuration.Config.UI.SubForeColor;
 
 			// 点滅しない設定にしたときに消灯状態で固定されるのを防ぐ
 			if ( !Utility.Configuration.Config.FormHeadquarters.BlinkAtMaximum ) {
 				if ( ShipCount.Tag as bool? ?? false ) {
-					ShipCount.BackColor = Utility.Configuration.Config.UI.FleetDamageColor.ColorData;
-					ShipCount.ForeColor = Utility.Configuration.Config.UI.HighlightForeColor.ColorData;
+					ShipCount.BackColor = Color.LightCoral;
 				}
 
 				if ( EquipmentCount.Tag as bool? ?? false ) {
-					EquipmentCount.BackColor = Utility.Configuration.Config.UI.FleetDamageColor.ColorData;
-					EquipmentCount.ForeColor = Utility.Configuration.Config.UI.HighlightForeColor.ColorData;
+					EquipmentCount.BackColor = Color.LightCoral;
 				}
 			}
 
-			CustomFlowSettings();
-        }
+			//visibility
+			CheckVisibilityConfiguration();
+			{
+				var visibility = Utility.Configuration.Config.FormHeadquarters.Visibility.List;
+				AdmiralName.Visible = visibility[0];
+				AdmiralComment.Visible = visibility[1];
+				HQLevel.Visible = visibility[2];
+				ShipCount.Visible = visibility[3];
+				EquipmentCount.Visible = visibility[4];
+				InstantRepair.Visible = visibility[5];
+				InstantConstruction.Visible = visibility[6];
+				DevelopmentMaterial.Visible = visibility[7];
+				ModdingMaterial.Visible = visibility[8];
+				FurnitureCoin.Visible = visibility[9];
+				Fuel.Visible = visibility[10];
+				Ammo.Visible = visibility[11];
+				Steel.Visible = visibility[12];
+				Bauxite.Visible = visibility[13];
+			}
+
+		}
+
+
+		/// <summary>
+		/// VisibleFlags 設定をチェックし、不正な値だった場合は初期値に戻します。
+		/// </summary>
+		public static void CheckVisibilityConfiguration() {
+			const int count = 14;
+			var config = Utility.Configuration.Config.FormHeadquarters;
+
+			if ( config.Visibility == null )
+				config.Visibility = new Utility.Storage.SerializableList<bool>( Enumerable.Repeat( true, count ).ToList() );
+
+			for ( int i = config.Visibility.List.Count; i < count; i++ ) {
+				config.Visibility.List.Add( true );
+			}
+
+		}
+
+		/// <summary>
+		/// 各表示項目の名称を返します。
+		/// </summary>
+		public static IEnumerable<string> GetItemNames() {
+			yield return "提督名";
+			yield return "提督コメント";
+			yield return "司令部Lv";
+			yield return "艦船数";
+			yield return "装備数";
+			yield return "高速修復材";
+			yield return "高速建造材";
+			yield return "開発資材";
+			yield return "改修資材";
+			yield return "家具コイン";
+			yield return "燃料";
+			yield return "弾薬";
+			yield return "鋼材";
+			yield return "ボーキサイト";
+		}
+
 
 		void Updated( string apiname, dynamic data ) {
 
@@ -252,21 +247,17 @@ namespace ElectronicObserver.Window {
 
 				ShipCount.Text = string.Format( "{0}/{1}", RealShipCount, db.Admiral.MaxShipCount );
 				if ( RealShipCount > db.Admiral.MaxShipCount - 5 ) {
-					ShipCount.BackColor = Utility.Configuration.Config.UI.FleetDamageColor.ColorData;
-					ShipCount.ForeColor = Utility.Configuration.Config.UI.HighlightForeColor.ColorData;
+					ShipCount.BackColor = Color.LightCoral;
 				} else {
 					ShipCount.BackColor = Color.Transparent;
-					ShipCount.ForeColor = Utility.Configuration.Config.UI.ForeColor.ColorData;
 				}
 				ShipCount.Tag = RealShipCount >= db.Admiral.MaxShipCount;
 
 				EquipmentCount.Text = string.Format( "{0}/{1}", RealEquipmentCount, db.Admiral.MaxEquipmentCount );
 				if ( RealEquipmentCount > db.Admiral.MaxEquipmentCount + 3 - 20 ) {
-					EquipmentCount.BackColor = Utility.Configuration.Config.UI.FleetDamageColor.ColorData;
-					EquipmentCount.ForeColor = Utility.Configuration.Config.UI.HighlightForeColor.ColorData;
+					EquipmentCount.BackColor = Color.LightCoral;
 				} else {
 					EquipmentCount.BackColor = Color.Transparent;
-					EquipmentCount.ForeColor = Utility.Configuration.Config.UI.ForeColor.ColorData;
 				}
 				EquipmentCount.Tag = RealEquipmentCount >= db.Admiral.MaxEquipmentCount;
 
@@ -326,12 +317,9 @@ namespace ElectronicObserver.Window {
 			FlowPanelResource.SuspendLayout();
 			{
 				Color overcolor = Color.Moccasin;
-				Color fore = Utility.Configuration.Config.UI.ForeColor;
-				Color back = Utility.Configuration.Config.UI.HighlightForeColor;
 
 				Fuel.Text = db.Material.Fuel.ToString();
 				Fuel.BackColor = db.Material.Fuel < db.Admiral.MaxResourceRegenerationAmount ? Color.Transparent : overcolor;
-				Fuel.ForeColor = db.Material.Fuel < db.Admiral.MaxResourceRegenerationAmount ? fore : back;
 				ToolTipInfo.SetToolTip( Fuel, string.Format( "今日: {0:+##;-##;±0}\n今週: {1:+##;-##;±0}\n今月: {2:+##;-##;±0}",
 					resday == null ? 0 : ( db.Material.Fuel - resday.Fuel ),
 					resweek == null ? 0 : ( db.Material.Fuel - resweek.Fuel ),
@@ -339,7 +327,6 @@ namespace ElectronicObserver.Window {
 
 				Ammo.Text = db.Material.Ammo.ToString();
 				Ammo.BackColor = db.Material.Ammo < db.Admiral.MaxResourceRegenerationAmount ? Color.Transparent : overcolor;
-				Ammo.ForeColor = db.Material.Ammo < db.Admiral.MaxResourceRegenerationAmount ? fore : back;
 				ToolTipInfo.SetToolTip( Ammo, string.Format( "今日: {0:+##;-##;±0}\n今週: {1:+##;-##;±0}\n今月: {2:+##;-##;±0}",
 					resday == null ? 0 : ( db.Material.Ammo - resday.Ammo ),
 					resweek == null ? 0 : ( db.Material.Ammo - resweek.Ammo ),
@@ -347,7 +334,6 @@ namespace ElectronicObserver.Window {
 
 				Steel.Text = db.Material.Steel.ToString();
 				Steel.BackColor = db.Material.Steel < db.Admiral.MaxResourceRegenerationAmount ? Color.Transparent : overcolor;
-				Steel.ForeColor = db.Material.Steel < db.Admiral.MaxResourceRegenerationAmount ? fore : back;
 				ToolTipInfo.SetToolTip( Steel, string.Format( "今日: {0:+##;-##;±0}\n今週: {1:+##;-##;±0}\n今月: {2:+##;-##;±0}",
 					resday == null ? 0 : ( db.Material.Steel - resday.Steel ),
 					resweek == null ? 0 : ( db.Material.Steel - resweek.Steel ),
@@ -355,7 +341,6 @@ namespace ElectronicObserver.Window {
 
 				Bauxite.Text = db.Material.Bauxite.ToString();
 				Bauxite.BackColor = db.Material.Bauxite < db.Admiral.MaxResourceRegenerationAmount ? Color.Transparent : overcolor;
-				Bauxite.ForeColor = db.Material.Bauxite < db.Admiral.MaxResourceRegenerationAmount ? fore : back;
 				ToolTipInfo.SetToolTip( Bauxite, string.Format( "今日: {0:+##;-##;±0}\n今週: {1:+##;-##;±0}\n今月: {2:+##;-##;±0}",
 					resday == null ? 0 : ( db.Material.Bauxite - resday.Bauxite ),
 					resweek == null ? 0 : ( db.Material.Bauxite - resweek.Bauxite ),
@@ -381,23 +366,11 @@ namespace ElectronicObserver.Window {
 
 			if ( Utility.Configuration.Config.FormHeadquarters.BlinkAtMaximum ) {
 				if ( ShipCount.Tag as bool? ?? false ) {
-					if ( DateTime.Now.Second % 2 == 0 ) {
-						ShipCount.BackColor = Utility.Configuration.Config.UI.FleetDamageColor.ColorData;
-						ShipCount.ForeColor = Utility.Configuration.Config.UI.HighlightForeColor.ColorData;
-					} else {
-						ShipCount.BackColor = Color.Transparent;
-						ShipCount.ForeColor = Utility.Configuration.Config.UI.ForeColor.ColorData;
-					}
+					ShipCount.BackColor = DateTime.Now.Second % 2 == 0 ? Color.LightCoral : Color.Transparent;
 				}
 
 				if ( EquipmentCount.Tag as bool? ?? false ) {
-					if ( DateTime.Now.Second % 2 == 0 ) {
-						EquipmentCount.BackColor = Utility.Configuration.Config.UI.FleetDamageColor.ColorData;
-						EquipmentCount.ForeColor = Utility.Configuration.Config.UI.HighlightForeColor.ColorData;
-					} else {
-						EquipmentCount.BackColor = Color.Transparent;
-						EquipmentCount.ForeColor = Utility.Configuration.Config.UI.ForeColor.ColorData;
-					}
+					EquipmentCount.BackColor = DateTime.Now.Second % 2 == 0 ? Color.LightCoral : Color.Transparent;
 				}
 			}
 		}
@@ -430,8 +403,7 @@ namespace ElectronicObserver.Window {
 		}
 
 
-		public override string GetPersistString()
-		{
+		protected override string GetPersistString() {
 			return "HeadQuarters";
 		}
 
