@@ -1,0 +1,770 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A9ABEC50-1BFC-4C69-87AE-C68DB6004F68}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ElectronicObserver</RootNamespace>
+    <AssemblyName>ElectronicObserver</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release_452\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>74eo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FiddlerCore4">
+      <HintPath>..\packages\FiddlerCore.4.4.8.4\lib\net40\FiddlerCore4.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\assemblies\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="SwfDotNet">
+      <HintPath>..\assemblies\SwfDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\AdmiralData.cs" />
+    <Compile Include="Data\ArsenalData.cs" />
+    <Compile Include="Data\BaseAirCorpsData.cs" />
+    <Compile Include="Data\BaseAirCorpsSquadron.cs" />
+    <Compile Include="Data\Battle\BattleAirBattle.cs" />
+    <Compile Include="Data\Battle\BattleCombinedAirBattle.cs" />
+    <Compile Include="Data\Battle\BattleCombinedAirRaid.cs" />
+    <Compile Include="Data\Battle\BattleCombinedNightOnly.cs" />
+    <Compile Include="Data\Battle\BattleCombinedNormalDay.cs" />
+    <Compile Include="Data\Battle\BattleCombinedNormalNight.cs" />
+    <Compile Include="Data\Battle\BattleCombinedWater.cs" />
+    <Compile Include="Data\Battle\BattleData.cs" />
+    <Compile Include="Data\Battle\BattleDay.cs" />
+    <Compile Include="Data\Battle\BattleAirRaid.cs" />
+    <Compile Include="Data\Battle\BattleDetail.cs" />
+    <Compile Include="Data\Battle\BattleManager.cs" />
+    <Compile Include="Data\Battle\BattleNight.cs" />
+    <Compile Include="Data\Battle\BattleNightOnly.cs" />
+    <Compile Include="Data\Battle\BattleNormalDay.cs" />
+    <Compile Include="Data\Battle\BattleNormalNight.cs" />
+    <Compile Include="Data\Battle\BattlePracticeDay.cs" />
+    <Compile Include="Data\Battle\BattlePracticeNight.cs" />
+    <Compile Include="Data\Battle\BattleResultData.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseAirBattle.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseBase.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseBaseAirAttack.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseInitial.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseNightBattle.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseOpeningASW.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseSearching.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseShelling.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseSupport.cs" />
+    <Compile Include="Data\Battle\Phase\PhaseTorpedo.cs" />
+    <Compile Include="Data\Constants.cs" />
+    <Compile Include="Data\DockData.cs" />
+    <Compile Include="Data\EquipmentData.cs" />
+    <Compile Include="Data\EquipmentDataMaster.cs" />
+    <Compile Include="Data\EquipmentType.cs" />
+    <Compile Include="Data\FleetManager.cs" />
+    <Compile Include="Data\IDDictionary.cs" />
+    <Compile Include="Data\IIdentifiable.cs" />
+    <Compile Include="Data\KCDatabase.cs" />
+    <Compile Include="Data\FleetData.cs" />
+    <Compile Include="Data\MapInfoData.cs" />
+    <Compile Include="Data\MaterialData.cs" />
+    <Compile Include="Data\MissionData.cs" />
+    <Compile Include="Data\QuestData.cs" />
+    <Compile Include="Data\QuestManager.cs" />
+    <Compile Include="Data\APIWrapper.cs" />
+    <Compile Include="Data\Quest\ProgressAGo.cs" />
+    <Compile Include="Data\Quest\ProgressBattle.cs" />
+    <Compile Include="Data\Quest\ProgressConstruction.cs" />
+    <Compile Include="Data\Quest\ProgressData.cs" />
+    <Compile Include="Data\Quest\ProgressDestruction.cs" />
+    <Compile Include="Data\Quest\ProgressDevelopment.cs" />
+    <Compile Include="Data\Quest\ProgressDiscard.cs" />
+    <Compile Include="Data\Quest\ProgressDocking.cs" />
+    <Compile Include="Data\Quest\ProgressExpedition.cs" />
+    <Compile Include="Data\Quest\ProgressImprovement.cs" />
+    <Compile Include="Data\Quest\ProgressModernization.cs" />
+    <Compile Include="Data\Quest\ProgressPractice.cs" />
+    <Compile Include="Data\Quest\ProgressSlaughter.cs" />
+    <Compile Include="Data\Quest\ProgressSupply.cs" />
+    <Compile Include="Data\Quest\QuestProgressManager.cs" />
+    <Compile Include="Data\ResponseWrapper.cs" />
+    <Compile Include="Data\CompassData.cs" />
+    <Compile Include="Data\ShipGroupData.cs" />
+    <Compile Include="Data\ShipGroupManager.cs" />
+    <Compile Include="Data\ShipGroup\ExpressionData.cs" />
+    <Compile Include="Data\ShipGroup\ExpressionList.cs" />
+    <Compile Include="Data\ShipGroup\ExpressionManager.cs" />
+    <Compile Include="Data\UseItem.cs" />
+    <Compile Include="Data\UseItemMaster.cs" />
+    <Compile Include="Notifier\NotifierDialogData.cs" />
+<<<<<<< HEAD
+    <Compile Include="Observer\APIGraphicList.cs" />
+=======
+    <Compile Include="Notifier\NotifierDamage.cs" />
+    <Compile Include="Notifier\NotifierRepair.cs" />
+    <Compile Include="Notifier\NotifierExpedition.cs" />
+    <Compile Include="Notifier\NotifierManager.cs" />
+    <Compile Include="Observer\APIKancolleDB.cs" />
+
+    <Compile Include="Observer\kcsapi\api_get_member\base_air_corps.cs" />
+>>>>>>> v2.4.0.2
+    <Compile Include="Observer\kcsapi\api_get_member\material.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\payitem.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\record.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\require_info.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\ship_deck.cs" />
+    <Compile Include="Observer\kcsapi\api_req_air_corps\change_name.cs" />
+    <Compile Include="Observer\kcsapi\api_req_air_corps\set_action.cs" />
+    <Compile Include="Observer\kcsapi\api_req_air_corps\set_plane.cs" />
+    <Compile Include="Observer\kcsapi\api_req_air_corps\supply.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\ld_airbattle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_hensei\combined.cs" />
+    <Compile Include="Observer\kcsapi\api_req_hensei\preset_select.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kaisou\marriage.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kaisou\open_exslot.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kaisou\slot_deprive.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kaisou\slot_exchange_index.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\remodel_slotlist.cs" />
+    <Compile Include="Observer\kcsapi\api_req_map\select_eventmap_rank.cs" />
+    <Compile Include="Observer\kcsapi\api_req_member\updatecomment.cs" />
+    <Compile Include="Observer\kcsapi\api_req_mission\result.cs" />
+    <Compile Include="Observer\kcsapi\api_req_quest\stop.cs" />
+    <Compile Include="Observer\kcsapi\api_req_ranking\getlist.cs" />
+    <Compile Include="Observer\kcsapi\api_req_sortie\airbattle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_sortie\ld_airbattle.cs" />
+    <Compile Include="Resource\ImageCollection.cs" />
+    <Compile Include="Resource\Record\ResourceRecord.cs" />
+    <Compile Include="Utility\Data\MapCell2WikiPoint.cs" />
+    <Compile Include="Utility\iniFiles.cs" />
+    <Compile Include="Utility\KanVoice.cs" />
+    <Compile Include="Utility\Mathematics\GMTHelper.cs" />
+    <Compile Include="Utility\SwfDecompiler.cs" />
+    <Compile Include="Utility\SyncBGMPlayer.cs" />
+    <Compile Include="Utility\MediaPlayer.cs" />
+    <Compile Include="Utility\Modify\ModifyConfiguration.cs" />
+    <Compile Include="Utility\PathHelper.cs" />
+    <Compile Include="Utility\Storage\DataStorage.cs" />
+    <Compile Include="Observer\APIBase.cs" />
+    <Compile Include="Observer\APIDictionary.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\basic.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\deck.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\kdock.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\mapinfo.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\ndock.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\picture_book.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\questlist.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\ship2.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\ship3.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\slot_item.cs" />
+    <Compile Include="Observer\kcsapi\api_get_member\useitem.cs" />
+    <Compile Include="Observer\kcsapi\api_port\port.cs" />
+    <Compile Include="Observer\kcsapi\api_req_battle_midnight\battle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_battle_midnight\sp_midnight.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\airbattle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\battle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\battleresult.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\battle_water.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\goback_port.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\midnight_battle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_combined_battle\sp_midnight.cs" />
+    <Compile Include="Observer\kcsapi\api_req_hensei\change.cs" />
+    <Compile Include="Observer\kcsapi\api_req_hokyu\charge.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kaisou\powerup.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kaisou\remodeling.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\createitem.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\createship.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\createship_speedchange.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\destroyitem2.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\destroyship.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\getship.cs" />
+    <Compile Include="Observer\kcsapi\api_req_kousyou\remodel_slot.cs" />
+    <Compile Include="Observer\kcsapi\api_req_map\next.cs" />
+    <Compile Include="Observer\kcsapi\api_req_map\start.cs" />
+    <Compile Include="Observer\kcsapi\api_req_member\get_practice_enemyinfo.cs" />
+    <Compile Include="Observer\kcsapi\api_req_member\updatedeckname.cs" />
+    <Compile Include="Observer\kcsapi\api_req_mission\start.cs" />
+    <Compile Include="Observer\kcsapi\api_req_nyukyo\speedchange.cs" />
+    <Compile Include="Observer\kcsapi\api_req_nyukyo\start.cs" />
+    <Compile Include="Observer\kcsapi\api_req_practice\battle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_practice\battle_result.cs" />
+    <Compile Include="Observer\kcsapi\api_req_practice\midnight_battle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_quest\clearitemget.cs" />
+    <Compile Include="Observer\kcsapi\api_req_sortie\battle.cs" />
+    <Compile Include="Observer\kcsapi\api_req_sortie\battleresult.cs" />
+    <Compile Include="Resource\Record\ConstructionRecord.cs" />
+    <Compile Include="Resource\Record\DevelopmentRecord.cs" />
+    <Compile Include="Resource\Record\EnemyFleetRecord.cs" />
+    <Compile Include="Resource\Record\RecordBase.cs" />
+    <Compile Include="Resource\Record\RecordManager.cs" />
+    <Compile Include="Resource\Record\ShipDropRecord.cs" />
+    <Compile Include="Resource\Record\ShipParameterRecord.cs" />
+    <Compile Include="Resource\ResourceManager.cs" />
+    <Compile Include="Utility\Configuration.cs" />
+    <Compile Include="Utility\Data\ExpTable.cs" />
+    <Compile Include="Utility\ErrorReporter.cs" />
+    <Compile Include="Utility\Logger.cs" />
+    <Compile Include="Utility\Mathematics\DateTimeHelper.cs" />
+    <Compile Include="Utility\Mathematics\Fraction.cs" />
+    <Compile Include="Utility\SoftwareInformation.cs" />
+    <Compile Include="Utility\Storage\SerializableColor.cs" />
+    <Compile Include="Utility\Storage\SerializableFont.cs" />
+    <Compile Include="Utility\Storage\SerializableKeyValuePair.cs" />
+    <Compile Include="Utility\Storage\SerializableList.cs" />
+    <Compile Include="Utility\SystemEvents.cs" />
+    <Compile Include="Utility\WinAPI.cs" />
+    <Compile Include="Window\Control\ColorPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window\Control\ColorPicker.Designer.cs">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Control\DataGridViewEnableButtonColumn.cs" />
+    <Compile Include="Window\Control\ImageLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window\Control\ImageLabel.Designer.cs">
+      <DependentUpon>ImageLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusEquipment.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusEquipment.Designer.cs">
+      <DependentUpon>ShipStatusEquipment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusHP.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusHP.Designer.cs">
+      <DependentUpon>ShipStatusHP.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusLevel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusLevel.Designer.cs">
+      <DependentUpon>ShipStatusLevel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusResource.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window\Control\ShipStatusResource.Designer.cs">
+      <DependentUpon>ShipStatusResource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Control\StatusBarModule.cs" />
+    <Compile Include="Window\Control\WindowCaptureButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Window\Control\WindowCaptureButton.Designer.cs">
+      <DependentUpon>WindowCaptureButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogAlbumMasterEquipment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogAlbumMasterEquipment.Designer.cs">
+      <DependentUpon>DialogAlbumMasterEquipment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogAlbumMasterShip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogAlbumMasterShip.Designer.cs">
+      <DependentUpon>DialogAlbumMasterShip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogAlbumShipParameter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogAlbumShipParameter.Designer.cs">
+      <DependentUpon>DialogAlbumShipParameter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogConfiguration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogConfiguration.Designer.cs">
+      <DependentUpon>DialogConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogConfigurationBGMPlayer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogConfigurationBGMPlayer.Designer.cs">
+      <DependentUpon>DialogConfigurationBGMPlayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogConstructionRecordViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogConstructionRecordViewer.Designer.cs">
+      <DependentUpon>DialogConstructionRecordViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogDevelopmentRecordViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogDevelopmentRecordViewer.Designer.cs">
+      <DependentUpon>DialogDevelopmentRecordViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogDropRecordViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogDropRecordViewer.Designer.cs">
+      <DependentUpon>DialogDropRecordViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogEquipmentList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogEquipmentList.Designer.cs">
+      <DependentUpon>DialogEquipmentList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogHalloween.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogHalloween.Designer.cs">
+      <DependentUpon>DialogHalloween.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Observer\APIObserver.cs" />
+    <Compile Include="Observer\kcsapi\api_start2.cs" />
+    <Compile Include="Data\ShipData.cs" />
+    <Compile Include="Data\ShipDataMaster.cs" />
+    <Compile Include="Data\ShipType.cs" />
+    <Compile Include="DynamicJson.cs" />
+    <Compile Include="Window\Dialog\DialogPlugins.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogPlugins.Designer.cs">
+      <DependentUpon>DialogPlugins.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogPluginUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogPluginUpdate.Designer.cs">
+      <DependentUpon>DialogPluginUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogResourceChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogResourceChart.Designer.cs">
+      <DependentUpon>DialogResourceChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupColumnFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupColumnFilter.Designer.cs">
+      <DependentUpon>DialogShipGroupColumnFilter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupCSVOutput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupCSVOutput.Designer.cs">
+      <DependentUpon>DialogShipGroupCSVOutput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupFilter.Designer.cs">
+      <DependentUpon>DialogShipGroupFilter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupSortOrder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogShipGroupSortOrder.Designer.cs">
+      <DependentUpon>DialogShipGroupSortOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogTextInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogTextInput.Designer.cs">
+      <DependentUpon>DialogTextInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogTextSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogTextSelect.Designer.cs">
+      <DependentUpon>DialogTextSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogVersion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogVersion.Designer.cs">
+      <DependentUpon>DialogVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogWhitecap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Dialog\DialogWhitecap.Designer.cs">
+      <DependentUpon>DialogWhitecap.cs</DependentUpon>
+    </Compile>
+<<<<<<< HEAD
+=======
+    <Compile Include="Window\FormArsenal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormArsenal.Designer.cs">
+      <DependentUpon>FormArsenal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\FormBaseAirCorps.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormBaseAirCorps.Designer.cs">
+      <DependentUpon>FormBaseAirCorps.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\FormBattle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormBattle.Designer.cs">
+      <DependentUpon>FormBattle.cs</DependentUpon>
+    </Compile>
+>>>>>>> v2.4.0.2
+    <Compile Include="Window\FormBrowserHost.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormBrowserHost.Designer.cs">
+      <DependentUpon>FormBrowserHost.cs</DependentUpon>
+    </Compile>
+<<<<<<< HEAD
+=======
+    <Compile Include="Window\FormCompass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormCompass.Designer.cs">
+      <DependentUpon>FormCompass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\FormJson.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormJson.Designer.cs">
+      <DependentUpon>FormJson.cs</DependentUpon>
+    </Compile>
+>>>>>>> v2.4.0.2
+    <Compile Include="Window\FormWindowCapture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormWindowCapture.Designer.cs">
+      <DependentUpon>FormWindowCapture.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\FormFleet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormFleet.Designer.cs">
+      <DependentUpon>FormFleet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\FormMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormMain.Designer.cs">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\Data\Calculator.cs" />
+    <Compile Include="Window\FormShipGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormShipGroup.Designer.cs">
+      <DependentUpon>FormShipGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Integrate\FormCandidate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Integrate\FormCandidate.Designer.cs">
+      <DependentUpon>FormCandidate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Integrate\FormCapturing.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Integrate\FormCapturing.Designer.cs">
+      <DependentUpon>FormCapturing.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Integrate\FormIntegrated.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\Integrate\FormIntegrated.Designer.cs">
+      <DependentUpon>FormIntegrated.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Window\Plugins\ElectronicPlugin.cs" />
+    <Compile Include="Window\Plugins\PluginManager.cs" />
+    <Compile Include="Window\Plugins\PluginSettingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Window\Plugins\ObserverPlugin.cs" />
+    <Compile Include="Window\Plugins\ServerPlugin.cs" />
+    <Compile Include="Window\Plugins\DialogPlugin.cs" />
+    <Compile Include="Window\Plugins\DockPlugin.cs" />
+    <Compile Include="Window\Plugins\IPluginHost.cs" />
+    <Compile Include="Window\Support\ControlHelper.cs" />
+    <Compile Include="Window\Support\CustomFloatWindowFactory.cs" />
+    <Compile Include="Window\Support\WindowPlacementManager.cs" />
+    <EmbeddedResource Include="Window\Control\ColorPicker.resx">
+      <DependentUpon>ColorPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Control\ImageLabel.resx">
+      <DependentUpon>ImageLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Control\ShipStatusEquipment.resx">
+      <DependentUpon>ShipStatusEquipment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Control\ShipStatusHP.resx">
+      <DependentUpon>ShipStatusHP.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Control\ShipStatusLevel.resx">
+      <DependentUpon>ShipStatusLevel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Control\ShipStatusResource.resx">
+      <DependentUpon>ShipStatusResource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Control\WindowCaptureButton.resx">
+      <DependentUpon>WindowCaptureButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogAlbumMasterEquipment.resx">
+      <DependentUpon>DialogAlbumMasterEquipment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogAlbumMasterShip.resx">
+      <DependentUpon>DialogAlbumMasterShip.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogAlbumShipParameter.resx">
+      <DependentUpon>DialogAlbumShipParameter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogConfiguration.resx">
+      <DependentUpon>DialogConfiguration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogConfigurationBGMPlayer.resx">
+      <DependentUpon>DialogConfigurationBGMPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogConstructionRecordViewer.resx">
+      <DependentUpon>DialogConstructionRecordViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogDevelopmentRecordViewer.resx">
+      <DependentUpon>DialogDevelopmentRecordViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogDropRecordViewer.resx">
+      <DependentUpon>DialogDropRecordViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogEquipmentList.resx">
+      <DependentUpon>DialogEquipmentList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogHalloween.resx">
+      <DependentUpon>DialogHalloween.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogPlugins.resx">
+      <DependentUpon>DialogPlugins.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogPluginUpdate.resx">
+      <DependentUpon>DialogPluginUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogResourceChart.resx">
+      <DependentUpon>DialogResourceChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogShipGroupColumnFilter.resx">
+      <DependentUpon>DialogShipGroupColumnFilter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogShipGroupCSVOutput.resx">
+      <DependentUpon>DialogShipGroupCSVOutput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogShipGroupFilter.resx">
+      <DependentUpon>DialogShipGroupFilter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogShipGroupSortOrder.resx">
+      <DependentUpon>DialogShipGroupSortOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogTextInput.resx">
+      <DependentUpon>DialogTextInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogTextSelect.resx">
+      <DependentUpon>DialogTextSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogVersion.resx">
+      <DependentUpon>DialogVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Dialog\DialogWhitecap.resx">
+      <DependentUpon>DialogWhitecap.cs</DependentUpon>
+    </EmbeddedResource>
+<<<<<<< HEAD
+    <EmbeddedResource Include="Window\FormBrowserHost.resx">
+      <DependentUpon>FormBrowserHost.cs</DependentUpon>
+    </EmbeddedResource>
+=======
+    <EmbeddedResource Include="Window\FormArsenal.resx">
+      <DependentUpon>FormArsenal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\FormBaseAirCorps.resx">
+      <DependentUpon>FormBaseAirCorps.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\FormBattle.resx">
+      <DependentUpon>FormBattle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\FormBrowserHost.resx">
+      <DependentUpon>FormBrowserHost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\FormCompass.resx">
+      <DependentUpon>FormCompass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\FormJson.resx">
+      <DependentUpon>FormJson.cs</DependentUpon>
+    </EmbeddedResource>
+>>>>>>> v2.4.0.2
+    <EmbeddedResource Include="Window\FormWindowCapture.resx">
+      <DependentUpon>FormWindowCapture.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\FormFleet.resx">
+      <DependentUpon>FormFleet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\FormMain.resx">
+      <DependentUpon>FormMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Window\FormShipGroup.resx">
+      <DependentUpon>FormShipGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Integrate\FormCandidate.resx">
+      <DependentUpon>FormCandidate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Integrate\FormCapturing.resx">
+      <DependentUpon>FormCapturing.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Window\Integrate\FormIntegrated.resx">
+      <DependentUpon>FormIntegrated.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Assets.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Resources\MapCell.json" />
+    <None Include="Window\Plugins\UpdateFileFormat.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="74eo.ico" />
+    <Content Include="Other\Information\apilist.txt" />
+    <None Include="Other\Information\kcmemo.md" />
+    <Content Include="Other\Information\todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BrowserLib\BrowserLib.csproj">
+      <Project>{8bb3e37d-09fb-40b9-958a-8cdcd18ef1f5}</Project>
+      <Name>BrowserLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DockPanelSuite\WinFormsUI\WinFormsUI.csproj">
+      <Project>{c75532c4-765b-418e-b09b-46d36b2abdb1}</Project>
+      <Name>WinFormsUI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)*.*" "$(ProjectDir)..\output\"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -7,7 +7,7 @@ using ElectronicObserver.Utility;
 using ElectronicObserver.Window.Dialog;
 using ElectronicObserver.Window.Integrate;
 using ElectronicObserver.Window.Plugins;
-using ElectronicObserver.Window.Support;
+using ElectronicObserver.Window.Support; 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -501,7 +501,7 @@ namespace ElectronicObserver.Window
             }
         }
 
-			Show();
+//			Show();
         void menuitem_Click(object sender, EventArgs e)
         {
             var f = ((ToolStripMenuItem)sender).Tag as DockContent;
@@ -1454,9 +1454,13 @@ namespace ElectronicObserver.Window
                         Left = 3 - Width;
                     }
                     else if (Left + Width >= Screen.PrimaryScreen.WorkingArea.Width - 4)
-		private void StripMenu_View_BaseAirCorps_Click( object sender, EventArgs e ) {
-			ShowForm( fBaseAirCorps );
+                    {
+                        Left = Screen.PrimaryScreen.WorkingArea.Width - 3;
+                    }
 		}
+		
+				private void StripMenu_View_BaseAirCorps_Click( object sender, EventArgs e ) {
+			ShowForm( fBaseAirCorps );
 
 		private void StripMenu_View_Json_Click( object sender, EventArgs e ) {
 			ShowForm( fJson );
