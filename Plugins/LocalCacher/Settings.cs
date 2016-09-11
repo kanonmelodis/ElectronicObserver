@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ElectronicObserver.Window.Dialog;
-using ElectronicObserver.Notifier;
 using ElectronicObserver.Window.Plugins;
 using ElectronicObserver.Utility;
 using System.IO;

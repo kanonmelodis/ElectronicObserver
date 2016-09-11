@@ -165,6 +165,7 @@
     <Compile Include="Data\ShipGroup\ExpressionManager.cs" />
     <Compile Include="Data\UseItem.cs" />
     <Compile Include="Data\UseItemMaster.cs" />
+	<Compile Include="Notifier\NotifierDialogData.cs" />
     <Compile Include="Observer\APIGraphicList.cs" />
     <Compile Include="Observer\APIKancolleDB.cs" />
 
