@@ -201,7 +201,7 @@ deploy:
   prerelease: true
 
 # to disable deployment
-#deploy: off
+deploy: off
 
 #---------------------------------#
 #        global handlers          #
