@@ -178,9 +178,9 @@ after_build:
 #      artifacts configuration    #
 #---------------------------------#
 
-#artifacts:
+artifacts:
 
- # - path: 74eo.zip
+  - path: output
 
 
 #---------------------------------#
