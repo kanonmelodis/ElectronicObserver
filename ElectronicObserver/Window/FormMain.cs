@@ -1457,24 +1457,17 @@ namespace ElectronicObserver.Window
                     {
                         Left = Screen.PrimaryScreen.WorkingArea.Width - 3;
                     }
+				}
+			}
 		}
 		
-				private void StripMenu_View_BaseAirCorps_Click( object sender, EventArgs e ) {
+		private void StripMenu_View_BaseAirCorps_Click( object sender, EventArgs e ) {
 			ShowForm( fBaseAirCorps );
-
+		
+		}
 		private void StripMenu_View_Json_Click( object sender, EventArgs e ) {
 			ShowForm( fJson );
 		}
-
-                    {
-                        Left = Screen.PrimaryScreen.WorkingArea.Width - 3;
-                    }
-                }
-            }
-
-
-
-        }
     }
 }
 

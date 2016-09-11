@@ -165,12 +165,7 @@
     <Compile Include="Data\ShipGroup\ExpressionManager.cs" />
     <Compile Include="Data\UseItem.cs" />
     <Compile Include="Data\UseItemMaster.cs" />
-    <Compile Include="Notifier\NotifierDialogData.cs" />
     <Compile Include="Observer\APIGraphicList.cs" />
-    <Compile Include="Notifier\NotifierDamage.cs" />
-    <Compile Include="Notifier\NotifierRepair.cs" />
-    <Compile Include="Notifier\NotifierExpedition.cs" />
-    <Compile Include="Notifier\NotifierManager.cs" />
     <Compile Include="Observer\APIKancolleDB.cs" />
 
     <Compile Include="Observer\kcsapi\api_get_member\base_air_corps.cs" />
