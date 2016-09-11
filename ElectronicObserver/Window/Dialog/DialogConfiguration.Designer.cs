@@ -159,6 +159,7 @@
 			this.tabPage18 = new System.Windows.Forms.TabPage();
 			this.FormCompass_CandidateDisplayCount = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
+			this.FormQuest_ShowOther = new System.Windows.Forms.CheckBox();
 			this.tabPage13 = new System.Windows.Forms.TabPage();
 			this.FormShipGroup_ShipNameSortMethod = new System.Windows.Forms.ComboBox();
 			this.label25 = new System.Windows.Forms.Label();
@@ -196,6 +197,14 @@
 			this.FormBrowser_FlashWMode = new System.Windows.Forms.ComboBox();
 			this.label20 = new System.Windows.Forms.Label();
 			this.FormBrowser_FlashQuality = new System.Windows.Forms.ComboBox();
+			this.SubWindow_Json = new System.Windows.Forms.TabPage();
+			this.SubWindow_Json_SealingPanel = new System.Windows.Forms.Panel();
+			this.FormJson_AutoUpdate = new System.Windows.Forms.CheckBox();
+			this.label32 = new System.Windows.Forms.Label();
+			this.FormJson_UpdatesTree = new System.Windows.Forms.CheckBox();
+			this.FormJson_AutoUpdateFilter = new System.Windows.Forms.TextBox();
+			this.label31 = new System.Windows.Forms.Label();
+			this.label33 = new System.Windows.Forms.Label();
 			this.tabPage17 = new System.Windows.Forms.TabPage();
 			this.BGMPlayer_SyncBrowserMute = new System.Windows.Forms.CheckBox();
 			this.BGMPlayer_SetVolumeAll = new System.Windows.Forms.Button();
@@ -233,19 +242,31 @@
 			((System.ComponentModel.ISupportInitialize)(this.Log_AutoSaveMinutes)).BeginInit();
 			this.tabPage4.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.Control_ConditionBorder)).BeginInit();
+			this.tabPage5.SuspendLayout();
+			this.Debug_SealingPanel.SuspendLayout();
 			this.tabPage6.SuspendLayout();
 			this.tabPage7.SuspendLayout();
 			this.tabControl2.SuspendLayout();
 			this.tabPage8.SuspendLayout();
+			this.tabPage9.SuspendLayout();
+			this.tabPage19.SuspendLayout();
+			this.tabPage16.SuspendLayout();
 			this.tabPage18.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.FormCompass_CandidateDisplayCount)).BeginInit();
+			this.tabPage10.SuspendLayout();
+			this.groupBox1.SuspendLayout();
 			this.tabPage13.SuspendLayout();
 			this.tabPage12.SuspendLayout();
-			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.FormBrowser_ZoomRate)).BeginInit();
 			this.tabPage14.SuspendLayout();
 			this.groupBox4.SuspendLayout();
+			this.groupBox3.SuspendLayout();
+			this.SubWindow_Json.SuspendLayout();
+			this.SubWindow_Json_SealingPanel.SuspendLayout();
+			this.tabPage11.SuspendLayout();
+			this.tabPage15.SuspendLayout();
+			this.groupBox5.SuspendLayout();
 			this.tabPage17.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.BGMPlayer_VolumeAll)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.BGMPlayer_ControlGrid)).BeginInit();
@@ -260,14 +281,17 @@
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage4);
+			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage6);
 			this.tabControl1.Controls.Add(this.tabPage7);
+			this.tabControl1.Controls.Add(this.tabPage11);
+			this.tabControl1.Controls.Add(this.tabPage15);
 			this.tabControl1.Controls.Add(this.tabPage17);
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Multiline = true;
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(524, 291);
+			this.tabControl1.Size = new System.Drawing.Size(584, 320);
 			this.tabControl1.TabIndex = 0;
 			// 
 			// tabPage1
@@ -405,7 +429,7 @@
 			this.Connection_PanelSaveData.Controls.Add(this.Connection_SaveDataPath);
 			this.Connection_PanelSaveData.Location = new System.Drawing.Point(8, 119);
 			this.Connection_PanelSaveData.Name = "Connection_PanelSaveData";
-			this.Connection_PanelSaveData.Size = new System.Drawing.Size(442, 56);
+			this.Connection_PanelSaveData.Size = new System.Drawing.Size(562, 56);
 			this.Connection_PanelSaveData.TabIndex = 7;
 			// 
 			// Connection_ApplyVersion
@@ -466,7 +490,7 @@
 			// Connection_SaveDataPathSearch
 			// 
 			this.Connection_SaveDataPathSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.Connection_SaveDataPathSearch.Location = new System.Drawing.Point(404, 3);
+			this.Connection_SaveDataPathSearch.Location = new System.Drawing.Point(524, 3);
 			this.Connection_SaveDataPathSearch.Name = "Connection_SaveDataPathSearch";
 			this.Connection_SaveDataPathSearch.Size = new System.Drawing.Size(32, 23);
 			this.Connection_SaveDataPathSearch.TabIndex = 4;
@@ -490,7 +514,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.Connection_SaveDataPath.Location = new System.Drawing.Point(64, 3);
 			this.Connection_SaveDataPath.Name = "Connection_SaveDataPath";
-			this.Connection_SaveDataPath.Size = new System.Drawing.Size(334, 23);
+			this.Connection_SaveDataPath.Size = new System.Drawing.Size(454, 23);
 			this.Connection_SaveDataPath.TabIndex = 3;
 			this.Connection_SaveDataPath.TextChanged += new System.EventHandler(this.Connection_SaveDataPath_TextChanged);
 			// 
@@ -543,7 +567,7 @@
 			this.tabPage2.Location = new System.Drawing.Point(4, 24);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage2.Size = new System.Drawing.Size(456, 253);
+			this.tabPage2.Size = new System.Drawing.Size(576, 292);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "UI";
 			this.tabPage2.UseVisualStyleBackColor = true;
@@ -1052,7 +1076,7 @@
 			// UI_SubFontApply
 			// 
 			this.UI_SubFontApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.UI_SubFontApply.Location = new System.Drawing.Point(378, 35);
+			this.UI_SubFontApply.Location = new System.Drawing.Point(498, 35);
 			this.UI_SubFontApply.Name = "UI_SubFontApply";
 			this.UI_SubFontApply.Size = new System.Drawing.Size(32, 23);
 			this.UI_SubFontApply.TabIndex = 6;
@@ -1064,7 +1088,7 @@
 			// UI_MainFontApply
 			// 
 			this.UI_MainFontApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.UI_MainFontApply.Location = new System.Drawing.Point(378, 6);
+			this.UI_MainFontApply.Location = new System.Drawing.Point(498, 6);
 			this.UI_MainFontApply.Name = "UI_MainFontApply";
 			this.UI_MainFontApply.Size = new System.Drawing.Size(32, 23);
 			this.UI_MainFontApply.TabIndex = 2;
@@ -1085,7 +1109,7 @@
 			// UI_SubFontSelect
 			// 
 			this.UI_SubFontSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.UI_SubFontSelect.Location = new System.Drawing.Point(416, 35);
+			this.UI_SubFontSelect.Location = new System.Drawing.Point(536, 35);
 			this.UI_SubFontSelect.Name = "UI_SubFontSelect";
 			this.UI_SubFontSelect.Size = new System.Drawing.Size(32, 23);
 			this.UI_SubFontSelect.TabIndex = 7;
@@ -1099,7 +1123,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.UI_SubFont.Location = new System.Drawing.Point(92, 35);
 			this.UI_SubFont.Name = "UI_SubFont";
-			this.UI_SubFont.Size = new System.Drawing.Size(280, 23);
+			this.UI_SubFont.Size = new System.Drawing.Size(400, 23);
 			this.UI_SubFont.TabIndex = 5;
 			// 
 			// label8
@@ -1114,7 +1138,7 @@
 			// UI_MainFontSelect
 			// 
 			this.UI_MainFontSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.UI_MainFontSelect.Location = new System.Drawing.Point(416, 6);
+			this.UI_MainFontSelect.Location = new System.Drawing.Point(536, 6);
 			this.UI_MainFontSelect.Name = "UI_MainFontSelect";
 			this.UI_MainFontSelect.Size = new System.Drawing.Size(32, 23);
 			this.UI_MainFontSelect.TabIndex = 3;
@@ -1128,7 +1152,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.UI_MainFont.Location = new System.Drawing.Point(92, 6);
 			this.UI_MainFont.Name = "UI_MainFont";
-			this.UI_MainFont.Size = new System.Drawing.Size(280, 23);
+			this.UI_MainFont.Size = new System.Drawing.Size(400, 23);
 			this.UI_MainFont.TabIndex = 1;
 			// 
 			// label5
@@ -1157,7 +1181,7 @@
 			this.tabPage3.Location = new System.Drawing.Point(4, 44);
 			this.tabPage3.Name = "tabPage3";
 			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage3.Size = new System.Drawing.Size(456, 253);
+			this.tabPage3.Size = new System.Drawing.Size(576, 292);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "日志";
 			this.tabPage3.UseVisualStyleBackColor = true;
@@ -1176,7 +1200,7 @@
 			// label12
 			// 
 			this.label12.AutoSize = true;
-			this.label12.Location = new System.Drawing.Point(6, 141);
+			this.label12.Location = new System.Drawing.Point(6, 111);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(318, 15);
 			this.label12.TabIndex = 9;
@@ -1305,7 +1329,7 @@
 			this.tabPage4.Location = new System.Drawing.Point(4, 24);
 			this.tabPage4.Name = "tabPage4";
 			this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage4.Size = new System.Drawing.Size(456, 253);
+			this.tabPage4.Size = new System.Drawing.Size(576, 292);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "操作";
 			this.tabPage4.UseVisualStyleBackColor = true;
@@ -1393,6 +1417,10 @@
             // tabPage6
             // 
             this.tabPage6.Controls.Add(this.Life_ScreenDock);
+			this.tabPage5.Size = new System.Drawing.Size(456, 253);
+			this.Debug_SealingPanel.Size = new System.Drawing.Size(456, 297);
+			this.Debug_APIListPath.Size = new System.Drawing.Size(402, 23);
+			this.Debug_APIListPathSearch.Location = new System.Drawing.Point(416, 28);
             this.tabPage6.Controls.Add(this.Life_CanCloseFloatWindowInLock);
 			this.tabPage6.Controls.Add(this.Life_LockLayout);
 			this.tabPage6.Controls.Add(this.label24);
@@ -1408,7 +1436,7 @@
 			this.tabPage6.Location = new System.Drawing.Point(4, 24);
 			this.tabPage6.Name = "tabPage6";
 			this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage6.Size = new System.Drawing.Size(456, 253);
+			this.tabPage6.Size = new System.Drawing.Size(576, 292);
 			this.tabPage6.TabIndex = 5;
 			this.tabPage6.Text = "窗口";
 			this.tabPage6.UseVisualStyleBackColor = true;
@@ -1500,7 +1528,7 @@
 			// Life_LayoutFilePathSearch
 			// 
 			this.Life_LayoutFilePathSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.Life_LayoutFilePathSearch.Location = new System.Drawing.Point(416, 6);
+			this.Life_LayoutFilePathSearch.Location = new System.Drawing.Point(536, 6);
 			this.Life_LayoutFilePathSearch.Name = "Life_LayoutFilePathSearch";
 			this.Life_LayoutFilePathSearch.Size = new System.Drawing.Size(32, 23);
 			this.Life_LayoutFilePathSearch.TabIndex = 2;
@@ -1514,7 +1542,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.Life_LayoutFilePath.Location = new System.Drawing.Point(103, 6);
 			this.Life_LayoutFilePath.Name = "Life_LayoutFilePath";
-			this.Life_LayoutFilePath.Size = new System.Drawing.Size(307, 23);
+			this.Life_LayoutFilePath.Size = new System.Drawing.Size(427, 23);
 			this.Life_LayoutFilePath.TabIndex = 1;
 			// 
 			// label14
@@ -1549,10 +1577,10 @@
 			// tabPage7
 			// 
 			this.tabPage7.Controls.Add(this.tabControl2);
-			this.tabPage7.Location = new System.Drawing.Point(4, 44);
+			this.tabPage7.Location = new System.Drawing.Point(4, 24);
 			this.tabPage7.Name = "tabPage7";
 			this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage7.Size = new System.Drawing.Size(456, 233);
+			this.tabPage7.Size = new System.Drawing.Size(576, 292);
 			this.tabPage7.TabIndex = 6;
 			this.tabPage7.Text = "子窗口";
 			this.tabPage7.UseVisualStyleBackColor = true;
@@ -1560,15 +1588,20 @@
 			// tabControl2
 			// 
 			this.tabControl2.Controls.Add(this.tabPage8);
+			this.tabControl2.Controls.Add(this.tabPage9);
+			this.tabControl2.Controls.Add(this.tabPage19);
+			this.tabControl2.Controls.Add(this.tabPage16);
 			this.tabControl2.Controls.Add(this.tabPage18);
+			this.tabControl2.Controls.Add(this.tabPage10);
 			this.tabControl2.Controls.Add(this.tabPage13);
 			this.tabControl2.Controls.Add(this.tabPage12);
 			this.tabControl2.Controls.Add(this.tabPage14);
+			this.tabControl2.Controls.Add(this.SubWindow_Json);
 			this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl2.Location = new System.Drawing.Point(3, 3);
 			this.tabControl2.Name = "tabControl2";
 			this.tabControl2.SelectedIndex = 0;
-			this.tabControl2.Size = new System.Drawing.Size(450, 227);
+			this.tabControl2.Size = new System.Drawing.Size(570, 286);
 			this.tabControl2.TabIndex = 0;
 			// 
 			// tabPage8
@@ -1591,7 +1624,7 @@
 			this.tabPage8.Location = new System.Drawing.Point(4, 24);
 			this.tabPage8.Name = "tabPage8";
 			this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage8.Size = new System.Drawing.Size(442, 199);
+			this.tabPage8.Size = new System.Drawing.Size(562, 258);
 			this.tabPage8.TabIndex = 0;
 			this.tabPage8.Text = "舰队";
 			this.tabPage8.UseVisualStyleBackColor = true;
@@ -1746,6 +1779,10 @@
 			this.FormFleet_ShowAircraft.TabIndex = 0;
 			this.FormFleet_ShowAircraft.Text = "显示舰载机数量";
 			this.FormFleet_ShowAircraft.UseVisualStyleBackColor = true;
+			this.tabPage9.Size = new System.Drawing.Size(442, 201);
+			this.tabPage19.Size = new System.Drawing.Size(442, 201);
+			this.tabPage16.Size = new System.Drawing.Size(442, 201);
+			this.FormHeadquarters_Visibility.Size = new System.Drawing.Size(150, 149);
 			// 
 			// tabPage18
 			// 
@@ -1754,7 +1791,7 @@
 			this.tabPage18.Location = new System.Drawing.Point(4, 22);
 			this.tabPage18.Name = "tabPage18";
 			this.tabPage18.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage18.Size = new System.Drawing.Size(442, 201);
+			this.tabPage18.Size = new System.Drawing.Size(562, 260);
 			this.tabPage18.TabIndex = 7;
 			this.tabPage18.Text = "羅針盤";
 			this.tabPage18.UseVisualStyleBackColor = true;
@@ -1791,6 +1828,8 @@
 			this.label2.TabIndex = 3;
 			this.label2.Text = "一度に表示する候補数：";
 			// 
+			this.tabPage10.Location = new System.Drawing.Point(4, 24);
+			this.tabPage10.Size = new System.Drawing.Size(442, 199);
 			// tabPage13
 			// 
 			this.tabPage13.Controls.Add(this.FormShipGroup_ShipNameSortMethod);
@@ -1800,7 +1839,7 @@
 			this.tabPage13.Location = new System.Drawing.Point(4, 22);
 			this.tabPage13.Name = "tabPage13";
 			this.tabPage13.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage13.Size = new System.Drawing.Size(442, 201);
+			this.tabPage13.Size = new System.Drawing.Size(562, 260);
 			this.tabPage13.TabIndex = 4;
 			this.tabPage13.Text = "编成";
 			this.tabPage13.UseVisualStyleBackColor = true;
@@ -1867,7 +1906,7 @@
 			this.tabPage12.Location = new System.Drawing.Point(4, 22);
 			this.tabPage12.Name = "tabPage12";
 			this.tabPage12.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage12.Size = new System.Drawing.Size(442, 201);
+			this.tabPage12.Size = new System.Drawing.Size(562, 260);
 			this.tabPage12.TabIndex = 3;
 			this.tabPage12.Text = "浏览器";
 			this.tabPage12.UseVisualStyleBackColor = true;
@@ -1906,9 +1945,17 @@
 			this.FormBrowser_ZoomFit.Text = "自适应";
 			this.ToolTipInfo.SetToolTip(this.FormBrowser_ZoomFit, "随着窗口扩大缩小自适应。");
 			this.FormBrowser_ZoomFit.UseVisualStyleBackColor = true;
+			this.groupBox2.Size = new System.Drawing.Size(430, 77);
+			this.FormBrowser_ScreenShotPathSearch.Location = new System.Drawing.Point(392, 47);
+			this.FormBrowser_ScreenShotPath.Size = new System.Drawing.Size(310, 23);
+			this.FormBrowser_LogInPageURL.Size = new System.Drawing.Size(354, 23);
+			this.tabPage14.Location = new System.Drawing.Point(4, 22);
+			this.tabPage14.Size = new System.Drawing.Size(442, 201);
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox3.Controls.Add(this.FormBrowser_BrowserVersion);
 			this.groupBox3.Controls.Add(this.FormBrowser_DeleteRegistry);
 			this.groupBox3.Controls.Add(this.FormBrowser_GPURendering);
@@ -1916,7 +1963,7 @@
 			this.groupBox3.Controls.Add(this.label19);
 			this.groupBox3.Location = new System.Drawing.Point(6, 6);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(470, 46);
+			this.groupBox3.Size = new System.Drawing.Size(430, 46);
 			this.groupBox3.TabIndex = 10;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "注册表";
@@ -1944,7 +1991,7 @@
 			// FormBrowser_DeleteRegistry
 			// 
 			this.FormBrowser_DeleteRegistry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.FormBrowser_DeleteRegistry.Location = new System.Drawing.Point(414, 15);
+			this.FormBrowser_DeleteRegistry.Location = new System.Drawing.Point(374, 15);
 			this.FormBrowser_DeleteRegistry.Name = "FormBrowser_DeleteRegistry";
 			this.FormBrowser_DeleteRegistry.Size = new System.Drawing.Size(50, 23);
 			this.FormBrowser_DeleteRegistry.TabIndex = 4;
@@ -1967,7 +2014,7 @@
 			// FormBrowser_ApplyRegistry
 			// 
 			this.FormBrowser_ApplyRegistry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.FormBrowser_ApplyRegistry.Location = new System.Drawing.Point(358, 15);
+			this.FormBrowser_ApplyRegistry.Location = new System.Drawing.Point(318, 15);
 			this.FormBrowser_ApplyRegistry.Name = "FormBrowser_ApplyRegistry";
 			this.FormBrowser_ApplyRegistry.Size = new System.Drawing.Size(50, 23);
 			this.FormBrowser_ApplyRegistry.TabIndex = 3;
@@ -2237,10 +2284,10 @@
 			this.tabPage17.Controls.Add(this.BGMPlayer_VolumeAll);
 			this.tabPage17.Controls.Add(this.BGMPlayer_Enabled);
 			this.tabPage17.Controls.Add(this.BGMPlayer_ControlGrid);
-			this.tabPage17.Location = new System.Drawing.Point(4, 44);
+			this.tabPage17.Location = new System.Drawing.Point(4, 24);
 			this.tabPage17.Name = "tabPage17";
 			this.tabPage17.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage17.Size = new System.Drawing.Size(456, 233);
+			this.tabPage17.Size = new System.Drawing.Size(576, 292);
 			this.tabPage17.TabIndex = 9;
 			this.tabPage17.Text = "BGM";
 			this.tabPage17.UseVisualStyleBackColor = true;
@@ -2319,7 +2366,7 @@
 			this.BGMPlayer_ControlGrid.RowHeadersVisible = false;
 			this.BGMPlayer_ControlGrid.RowTemplate.Height = 21;
 			this.BGMPlayer_ControlGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.BGMPlayer_ControlGrid.Size = new System.Drawing.Size(444, 128);
+			this.BGMPlayer_ControlGrid.Size = new System.Drawing.Size(564, 249);
 			this.BGMPlayer_ControlGrid.TabIndex = 0;
 			this.BGMPlayer_ControlGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.BGMPlayer_ControlGrid_CellContentClick);
 			this.BGMPlayer_ControlGrid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.BGMPlayer_ControlGrid_CellFormatting);
@@ -2365,7 +2412,7 @@
 			// 
 			this.ButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.ButtonOK.Location = new System.Drawing.Point(336, 297);
+			this.ButtonOK.Location = new System.Drawing.Point(296, 287);
 			this.ButtonOK.Name = "ButtonOK";
 			this.ButtonOK.Size = new System.Drawing.Size(75, 23);
 			this.ButtonOK.TabIndex = 1;
@@ -2376,7 +2423,7 @@
 			// 
 			this.ButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.ButtonCancel.Location = new System.Drawing.Point(417, 297);
+			this.ButtonCancel.Location = new System.Drawing.Point(377, 287);
 			this.ButtonCancel.Name = "ButtonCancel";
 			this.ButtonCancel.Size = new System.Drawing.Size(75, 23);
 			this.ButtonCancel.TabIndex = 2;
@@ -2424,7 +2471,7 @@
 			this.AcceptButton = this.ButtonOK;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.CancelButton = this.ButtonCancel;
-			this.ClientSize = new System.Drawing.Size(524, 332);
+			this.ClientSize = new System.Drawing.Size(464, 322);
 			this.Controls.Add(this.ButtonCancel);
 			this.Controls.Add(this.ButtonOK);
 			this.Controls.Add(this.tabControl1);
@@ -2485,6 +2532,10 @@
 			this.tabPage14.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox4.PerformLayout();
+			this.SubWindow_Json.ResumeLayout(false);
+			this.SubWindow_Json.PerformLayout();
+			this.SubWindow_Json_SealingPanel.ResumeLayout(false);
+			this.SubWindow_Json_SealingPanel.PerformLayout();
 			this.tabPage17.ResumeLayout(false);
 			this.tabPage17.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.BGMPlayer_VolumeAll)).EndInit();
@@ -2684,5 +2735,13 @@
 		private System.Windows.Forms.ComboBox FormBrowser_ToolMenuDockStyle;
 		private System.Windows.Forms.Label label30;
 		private System.Windows.Forms.CheckBox FormQuest_ShowOther;
+		private System.Windows.Forms.TabPage SubWindow_Json;
+		private System.Windows.Forms.CheckBox FormJson_AutoUpdate;
+		private System.Windows.Forms.CheckBox FormJson_UpdatesTree;
+		private System.Windows.Forms.TextBox FormJson_AutoUpdateFilter;
+		private System.Windows.Forms.Label label31;
+		private System.Windows.Forms.Label label32;
+		private System.Windows.Forms.Panel SubWindow_Json_SealingPanel;
+		private System.Windows.Forms.Label label33;
 	}
 }
