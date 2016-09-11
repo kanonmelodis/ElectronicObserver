@@ -1382,6 +1382,14 @@ namespace ElectronicObserver.Window
             fWindowCapture.Show(MainDockPanel);
         }
 
+		private void StripMenu_View_BaseAirCorps_Click( object sender, EventArgs e ) {
+			fBaseAirCorps.Show(MainDockPanel);
+		
+		}
+		private void StripMenu_View_Json_Click( object sender, EventArgs e ) {
+			fJson.Show(MainDockPanel);
+		}
+		
         #endregion
 
 
@@ -1457,13 +1465,9 @@ namespace ElectronicObserver.Window
 			}
 		}
 		
-		private void StripMenu_View_BaseAirCorps_Click( object sender, EventArgs e ) {
-			ShowForm( fBaseAirCorps );
 		
-		}
-		private void StripMenu_View_Json_Click( object sender, EventArgs e ) {
-			ShowForm( fJson );
-		}
+		
+		
     }
 }
 
