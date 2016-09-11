@@ -181,6 +181,7 @@ after_build:
 artifacts:
 
   - path: output
+    type: zip
 
 
 #---------------------------------#
