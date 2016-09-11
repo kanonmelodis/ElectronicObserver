@@ -151,8 +151,10 @@ namespace ElectronicObserver.Window {
 					var landattacker = slots.Where( e => e.EquipmentID == 167 );
 					double expeditionBonus = Math.Min( daihatsu.Count() * 0.05 + daihatsu_tank.Count() * 0.02 + landattacker.Count() * 0.01, 0.20 );
 
+					int tp = Calculator.GetTPDamage( fleet );
+
 					ToolTipInfo.SetToolTip( Name, string.Format(
-						"Lv合計: {0} / 平均: {1:0.00}\r\n{2}艦隊\r\nドラム缶搭載: {3}個 ({4}艦)\r\n大発動艇搭載: {5}個 ({6}艦, +{7:p1})\r\n総積載: 燃 {8} / 弾 {9}\r\n(1戦当たり 燃 {10} / 弾 {11})",
+						"Lv合計: {0} / 平均: {1:0.00}\r\n{2}艦隊\r\nドラム缶搭載: {3}個 ({4}艦)\r\n大発動艇搭載: {5}個 ({6}艦, +{7:p1})\r\n輸送量(TP): S {8} / A {9}\r\n総積載: 燃 {10} / 弾 {11}\r\n(1戦当たり 燃 {12} / 弾 {13})",
 						levelSum,
 						(double)levelSum / Math.Max( fleet.Members.Count( id => id != -1 ), 1 ),
 						Constants.GetSpeed( speed ),
@@ -161,6 +163,8 @@ namespace ElectronicObserver.Window {
 						daihatsu.Count() + daihatsu_tank.Count() + landattacker.Count(),
 						fleet.MembersInstance.Count( s => s == null ? false : s.SlotInstanceMaster.Any( q => q == null ? false : q.CategoryType == 24 || q.CategoryType == 46 ) ),
 						expeditionBonus + 0.01 * expeditionBonus * ( daihatsu.Sum( e => e.Level ) + daihatsu_tank.Sum( e => e.Level ) + landattacker.Sum( e => e.Level ) ) / Math.Max( daihatsu.Count() + daihatsu_tank.Count() + landattacker.Count(), 1 ),
+						tp,
+						(int)( tp * 0.7 ),
 						fueltotal,
 						ammototal,
 						fuelunit,
@@ -173,21 +177,20 @@ namespace ElectronicObserver.Window {
                 State = FleetData.UpdateFleetState(fleet, StateMain, ToolTipInfo, State, ref Timer);
 
 
-                //制空戦力計算	
-                {
-                    int airSuperiority = fleet.GetAirSuperiority_New();
-                    int airSuperiority_old = fleet.GetAirSuperiority_New(1);//对7星舰战使用120内部熟练度进行制空计算
-                    int airSuperiority_old2 = fleet.GetAirSuperiority_New(15);//对7星所有有内部熟练制空使用120内部熟练度进行制空计算
-                    AirSuperiority.Text = airSuperiority.ToString();
-                    ToolTipInfo.SetToolTip(AirSuperiority,
-                        string.Format("满熟练制空值: {0}/{5}\r\n確保: {1}\r\n優勢: {2}\r\n均衡: {3}\r\n劣勢: {4}\r\n",
-                        airSuperiority_old,
-                        (int)(airSuperiority / 3.0),
-                        (int)(airSuperiority / 1.5),
-                        (int)(airSuperiority * 1.5 - 1),
-                        (int)(airSuperiority * 3.0 - 1),
-                        airSuperiority_old2));
-                }
+				//制空戦力計算	
+				{
+					int airSuperiority = fleet.GetAirSuperiority();
+					bool includeLevel = Utility.Configuration.Config.FormFleet.AirSuperiorityMethod == 1;
+					AirSuperiority.Text = airSuperiority.ToString();
+					ToolTipInfo.SetToolTip( AirSuperiority,
+						string.Format( "確保: {0}\r\n優勢: {1}\r\n均衡: {2}\r\n劣勢: {3}\r\n({4}: {5})\r\n",
+						(int)( airSuperiority / 3.0 ),
+						(int)( airSuperiority / 1.5 ),
+						Math.Max( (int)( airSuperiority * 1.5 - 1 ), 0 ),
+						Math.Max( (int)( airSuperiority * 3.0 - 1 ), 0 ),
+						includeLevel ? "熟練度なし" : "熟練度あり",
+						includeLevel ? Calculator.GetAirSuperiorityIgnoreLevel( fleet ) : Calculator.GetAirSuperiority( fleet ) ) );
+				}
 
 
 				//索敵能力計算
@@ -197,11 +200,11 @@ namespace ElectronicObserver.Window {
 					double probStart = fleet.GetContactProbability();
 					var probSelect = fleet.GetContactSelectionProbability();
 
-					var ss = Utility.Configuration.Config.FormFleet.SearchingAbilities.Split( ';' );
-					for ( int i = 0; i < ss.Length; i++ ) {
-						sb.AppendFormat( "{0}: {1}\r\n", ss[i], fleet.GetSearchingAbilityString( i ) );
-					}
-					sb.AppendFormat( "\r\n触接開始率: \r\n　確保 {0:p1} / 優勢 {1:p1}\r\n",
+					sb.AppendFormat( "(旧)2-5式: {0}\r\n2-5式(秋): {1}\r\n2-5新秋簡易式: {2}\r\n判定式(33): {3}\r\n\r\n触接開始率: \r\n　確保 {4:p1} / 優勢 {5:p1}\r\n",
+						fleet.GetSearchingAbilityString( 0 ),
+						fleet.GetSearchingAbilityString( 1 ),
+						fleet.GetSearchingAbilityString( 2 ),
+						fleet.GetSearchingAbilityString( 3 ),
 						probStart,
 						probStart * 0.6 );
 
@@ -631,7 +634,12 @@ namespace ElectronicObserver.Window {
 					}
 				}
 				{
-					int airsup = Calculator.GetAirSuperiority( ship );
+					int airsup;
+					if ( Utility.Configuration.Config.FormFleet.AirSuperiorityMethod == 1 )
+						airsup = Calculator.GetAirSuperiority( ship );
+					else
+						airsup = Calculator.GetAirSuperiorityIgnoreLevel( ship );
+
 					int airbattle = ship.AirBattlePower;
 					if ( airsup > 0 ) {
 						if ( airbattle > 0 )
@@ -984,7 +992,7 @@ namespace ElectronicObserver.Window {
 			foreach ( var sl in shiplist ) {
 				sb.Append( "|" ).Append( sl.Key ).Append( ":" );
 
-				foreach ( var ship in sl.Value ) {
+				foreach ( var ship in sl.Value.OrderByDescending( s => s.Level ) ) {
 					sb.Append( ship.Level );
 
 					// 改造レベルに達しているのに未改造の艦は ".<たね=1, 改=2, 改二=3, ...>" を付加
