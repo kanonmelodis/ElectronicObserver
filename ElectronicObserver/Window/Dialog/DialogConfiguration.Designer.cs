@@ -242,19 +242,12 @@
 			((System.ComponentModel.ISupportInitialize)(this.Log_AutoSaveMinutes)).BeginInit();
 			this.tabPage4.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.Control_ConditionBorder)).BeginInit();
-			this.tabPage5.SuspendLayout();
-			this.Debug_SealingPanel.SuspendLayout();
 			this.tabPage6.SuspendLayout();
 			this.tabPage7.SuspendLayout();
 			this.tabControl2.SuspendLayout();
 			this.tabPage8.SuspendLayout();
-			this.tabPage9.SuspendLayout();
-			this.tabPage19.SuspendLayout();
-			this.tabPage16.SuspendLayout();
 			this.tabPage18.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.FormCompass_CandidateDisplayCount)).BeginInit();
-			this.tabPage10.SuspendLayout();
-			this.groupBox1.SuspendLayout();
 			this.tabPage13.SuspendLayout();
 			this.tabPage12.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -264,9 +257,6 @@
 			this.groupBox3.SuspendLayout();
 			this.SubWindow_Json.SuspendLayout();
 			this.SubWindow_Json_SealingPanel.SuspendLayout();
-			this.tabPage11.SuspendLayout();
-			this.tabPage15.SuspendLayout();
-			this.groupBox5.SuspendLayout();
 			this.tabPage17.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.BGMPlayer_VolumeAll)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.BGMPlayer_ControlGrid)).BeginInit();
@@ -281,11 +271,8 @@
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
 			this.tabControl1.Controls.Add(this.tabPage4);
-			this.tabControl1.Controls.Add(this.tabPage5);
 			this.tabControl1.Controls.Add(this.tabPage6);
 			this.tabControl1.Controls.Add(this.tabPage7);
-			this.tabControl1.Controls.Add(this.tabPage11);
-			this.tabControl1.Controls.Add(this.tabPage15);
 			this.tabControl1.Controls.Add(this.tabPage17);
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Multiline = true;
@@ -1417,10 +1404,6 @@
             // tabPage6
             // 
             this.tabPage6.Controls.Add(this.Life_ScreenDock);
-			this.tabPage5.Size = new System.Drawing.Size(456, 253);
-			this.Debug_SealingPanel.Size = new System.Drawing.Size(456, 297);
-			this.Debug_APIListPath.Size = new System.Drawing.Size(402, 23);
-			this.Debug_APIListPathSearch.Location = new System.Drawing.Point(416, 28);
             this.tabPage6.Controls.Add(this.Life_CanCloseFloatWindowInLock);
 			this.tabPage6.Controls.Add(this.Life_LockLayout);
 			this.tabPage6.Controls.Add(this.label24);
@@ -1588,11 +1571,7 @@
 			// tabControl2
 			// 
 			this.tabControl2.Controls.Add(this.tabPage8);
-			this.tabControl2.Controls.Add(this.tabPage9);
-			this.tabControl2.Controls.Add(this.tabPage19);
-			this.tabControl2.Controls.Add(this.tabPage16);
 			this.tabControl2.Controls.Add(this.tabPage18);
-			this.tabControl2.Controls.Add(this.tabPage10);
 			this.tabControl2.Controls.Add(this.tabPage13);
 			this.tabControl2.Controls.Add(this.tabPage12);
 			this.tabControl2.Controls.Add(this.tabPage14);
@@ -1779,12 +1758,8 @@
 			this.FormFleet_ShowAircraft.TabIndex = 0;
 			this.FormFleet_ShowAircraft.Text = "显示舰载机数量";
 			this.FormFleet_ShowAircraft.UseVisualStyleBackColor = true;
-			this.tabPage9.Size = new System.Drawing.Size(442, 201);
-			this.tabPage19.Size = new System.Drawing.Size(442, 201);
-			this.tabPage16.Size = new System.Drawing.Size(442, 201);
-			this.FormHeadquarters_Visibility.Size = new System.Drawing.Size(150, 149);
 			// 
-			// tabPage18
+			// tabPage18 
 			// 
 			this.tabPage18.Controls.Add(this.FormCompass_CandidateDisplayCount);
 			this.tabPage18.Controls.Add(this.label2);
@@ -1828,8 +1803,6 @@
 			this.label2.TabIndex = 3;
 			this.label2.Text = "一度に表示する候補数：";
 			// 
-			this.tabPage10.Location = new System.Drawing.Point(4, 24);
-			this.tabPage10.Size = new System.Drawing.Size(442, 199);
 			// tabPage13
 			// 
 			this.tabPage13.Controls.Add(this.FormShipGroup_ShipNameSortMethod);
