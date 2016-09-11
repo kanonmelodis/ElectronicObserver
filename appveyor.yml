@@ -191,14 +191,14 @@ artifacts:
 # provider names are case-sensitive!
 deploy:
 
-  release: 74EO-v$(appveyor_build_version)
-  description: 'ElectronicObserver'
-  provider: GitHub
-  auth_token:
-    secure: b41188dabb06db5c61e8f79fc2dd5b875450b1f9 # your encrypted token from GitHub
-  artifact: 74eo.zip          # upload all NuGet packages to release assets
-  draft: false
-  prerelease: true
+ # release: 74EO-v$(appveyor_build_version)
+  #description: 'ElectronicObserver'
+  #provider: GitHub
+  #auth_token:
+  #  secure: b41188dabb06db5c61e8f79fc2dd5b875450b1f9 # your encrypted token from GitHub
+  #artifact: 74eo.zip          # upload all NuGet packages to release assets
+  #draft: false
+  #prerelease: true
 
 # to disable deployment
 deploy: off
