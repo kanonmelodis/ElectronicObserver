@@ -512,6 +512,12 @@
     <Compile Include="Window\Integrate\FormIntegrated.Designer.cs">
       <DependentUpon>FormIntegrated.cs</DependentUpon>
     </Compile>
+	<Compile Include="Window\FormJson.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Window\FormJson.Designer.cs">
+      <DependentUpon>FormJson.cs</DependentUpon>
+    </Compile>
     <Compile Include="Window\Plugins\ElectronicPlugin.cs" />
     <Compile Include="Window\Plugins\PluginManager.cs" />
     <Compile Include="Window\Plugins\PluginSettingControl.cs">

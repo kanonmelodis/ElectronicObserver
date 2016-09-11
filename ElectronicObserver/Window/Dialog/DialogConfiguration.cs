@@ -1,5 +1,4 @@
-﻿using ElectronicObserver.Notifier;
-using ElectronicObserver.Observer;
+﻿using ElectronicObserver.Observer;
 using ElectronicObserver.Resource;
 using ElectronicObserver.Utility;
 using ElectronicObserver.Utility.Storage;
