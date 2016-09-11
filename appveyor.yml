@@ -180,7 +180,7 @@ after_build:
 
 artifacts:
 
-  - path: 74eo.zip
+ # - path: 74eo.zip
 
 
 #---------------------------------#
