@@ -39,8 +39,6 @@ skip_tags: true
 image: Visual Studio 2015
 
 # scripts that are called at very beginning, before repo cloning
-init:
-  - git config --global core.autocrlf input
 
 # clone directory
 clone_folder: c:\projects\myproject
@@ -133,6 +131,7 @@ build:
 # scripts to run before build
 before_build:
   git.exe submodule update --init -- "DockPanelSuite"
+  
   nuget restore
 # scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
 before_package:
@@ -140,9 +139,13 @@ before_package:
 # scripts to run after build
 after_build:
   copy output\*.* symbols\
+  
   copy output\Plugins\*.* symbols\Plugins\
+  
   del output\*.pdb
+  
   del output\Plugins\*.pdb
+  
   7z a 74eo.zip output
 # to run your custom scripts instead of automatic MSBuild
 
