@@ -189,7 +189,7 @@ artifacts:
 
 # providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
 # provider names are case-sensitive!
-deploy:
+#deploy:
 
  # release: 74EO-v$(appveyor_build_version)
   #description: 'ElectronicObserver'
