@@ -1099,7 +1099,10 @@ namespace ElectronicObserver.Utility {
 				public SerializableColor ForeColor { get; set; }
 
 				public SerializableColor BackColor { get; set; }
+				
+				public Notifier.NotifierDialogClickFlags ClickFlag { get; set; }
 
+				public Notifier.NotifierDialogAlignment Alignment { get; set; }
 
 				public ConfigNotifierBase() {
 					IsEnabled = true;
@@ -1114,6 +1117,8 @@ namespace ElectronicObserver.Utility {
 					ClosingInterval = 10000;
 					AccelInterval = 0;
 					CloseOnMouseMove = false;
+					ClickFlag = Notifier.NotifierDialogClickFlags.Left;
+					Alignment = Notifier.NotifierDialogAlignment.BottomRight;
 					Location = new Point( 0, 0 );
 					HasFormBorder = true;
 					TopMost = true;
