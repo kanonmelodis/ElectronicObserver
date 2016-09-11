@@ -368,7 +368,7 @@ namespace ElectronicObserver.Window {
 			e.Graphics.DrawLine( Pens.Silver, e.CellBounds.X, e.CellBounds.Bottom - 1, e.CellBounds.Right - 1, e.CellBounds.Bottom - 1 );
 		}
 
-		protected override string GetPersistString() {
+		public override string GetPersistString() {
 			return "BaseAirCorps";
 		}
 
