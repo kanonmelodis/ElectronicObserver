@@ -147,6 +147,8 @@ after_build:
   del output\Plugins\*.pdb
   
   7z a 74eo.zip output
+  
+  appveyor PushArtifact 74eo.zip
 # to run your custom scripts instead of automatic MSBuild
 
 # to disable automatic builds
@@ -178,13 +180,13 @@ test: off
 #      artifacts configuration    #
 #---------------------------------#
 
-artifacts:
+#artifacts:
 
-  - path: output
-    type: zip
+  #- path: output
+  #  type: zip
   
-  - path: symbols
-    type: zip
+  #- path: symbols
+  #  type: zip
 
 
 #---------------------------------#
