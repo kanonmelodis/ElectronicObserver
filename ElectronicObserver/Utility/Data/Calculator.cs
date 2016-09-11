@@ -759,7 +759,7 @@ namespace ElectronicObserver.Utility.Data {
 		/// <summary>
 		/// 各装備カテゴリにおける制空値の熟練度ボーナス
 		/// </summary>
-		private static readonly Dictionary<int, int[]> AircraftLevelBonus = new Dictionary<int, int[]>() {
+		public static readonly Dictionary<int, int[]> AircraftLevelBonus = new Dictionary<int, int[]>() {
 			{ 6, new int[] { 0, 0, 2, 5, 9, 14, 14, 22, 22 } },		//艦上戦闘機
 			{ 7, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } },			//艦上爆撃機
 			{ 8, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } },			//艦上攻撃機

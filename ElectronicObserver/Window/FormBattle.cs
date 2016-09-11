@@ -451,7 +451,7 @@ td,th,tr {text-align:left; padding:2px 4px;}
 
 			builder.AppendLine( "</body>\r\n</html>" );
 
-			new Dialog.DialogBattleReport( builder.ToString() ).Show();
+			//new Dialog.DialogBattleReport( builder.ToString() ).Show();
 		}
 
         private void FillAirBaseDamage(int index, StringBuilder builder, BattleDay day, string[] enemys, int[] hps, int[] maxHps)
@@ -1109,8 +1109,7 @@ Constants.GetAirSuperiority(AirBaseAttack.AirSuperiority),
 			if ( pd.IsStage1Available ) {
 
 				AirSuperiority.Text = Constants.GetAirSuperiority( pd.AirSuperiority );
-				ToolTipInfo.SetToolTip( AirSuperiority, string.Format( "航空伤害: {0}", pd.TotalDamage ) );
-
+				
 				int[] planeFriend = { pd.AircraftLostStage1Friend, pd.AircraftTotalStage1Friend };
 				AirStage1Friend.Text = string.Format( "-{0}/{1}", planeFriend[0], planeFriend[1] );
 
@@ -1246,11 +1245,9 @@ Constants.GetAirSuperiority(AirBaseAttack.AirSuperiority),
 
 				AirSuperiority.Text = Constants.GetAirSuperiority( pd1.AirSuperiority );
 				if ( isBattle2Enabled ) {
-					ToolTipInfo.SetToolTip( AirSuperiority, string.Format( "第2次: {0}\r\n航空伤害: {1}",
-						Constants.GetAirSuperiority( pd2.AirSuperiority ),
-						pd1.TotalDamage + pd2.TotalDamage ) );
+					ToolTipInfo.SetToolTip( AirSuperiority, "第2次: " + Constants.GetAirSuperiority( pd2.AirSuperiority ) );
 				} else {
-					ToolTipInfo.SetToolTip( AirSuperiority, string.Format( "航空伤害: {0}", pd1.TotalDamage ) );
+					ToolTipInfo.SetToolTip( AirSuperiority, null );
 				}
 
 
@@ -1728,17 +1725,16 @@ Constants.GetAirSuperiority(AirBaseAttack.AirSuperiority),
 					bool isEscaped =  bd.Initial.FriendFleet.EscapedShipList.Contains( ship.MasterID );
 
 
-					ToolTipInfo.SetToolTip( HPBars[i],
-						string.Format( "{0} Lv. {1}\r\nHP: ({2} → {3})/{4} ({5}) [{6}]\r\n\r\n造成伤害: {7}",
-							ship.MasterShip.NameWithClass,
-							ship.Level,
-							Math.Max( HPBars[i].PrevValue, 0 ),
-							Math.Max( HPBars[i].Value, 0 ),
-							HPBars[i].MaximumValue,
-							HPBars[i].Value - HPBars[i].PrevValue,
-							Constants.GetDamageState( (double)HPBars[i].Value / HPBars[i].MaximumValue, isPractice, ship.MasterShip.IsLandBase, isEscaped ),
-							( attackAirDamages[i] > 0 ) ? string.Format( "{0} (+{1})", attackDamages[i], attackAirDamages[i] ) : attackDamages[i].ToString()
-							)
+					StringBuilder builder = new StringBuilder();
+					builder.AppendFormat( "{0} Lv. {1}\r\nHP: ({2} → {3})/{4} ({5}) [{6}]\r\n与ダメージ: {7}\r\n\r\n",
+						ship.MasterShip.NameWithClass,
+						ship.Level,
+						Math.Max( HPBars[i].PrevValue, 0 ),
+						Math.Max( HPBars[i].Value, 0 ),
+						HPBars[i].MaximumValue,
+						HPBars[i].Value - HPBars[i].PrevValue,
+						Constants.GetDamageState( (double)HPBars[i].Value / HPBars[i].MaximumValue, isPractice, ship.MasterShip.IsLandBase, isEscaped ),
+						attackDamages[i]
 						);
 
 

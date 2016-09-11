@@ -224,19 +224,19 @@ namespace ElectronicObserver.Window.Dialog {
 
 		private void Debug_APIListPathSearch_Click( object sender, EventArgs e ) {
 
-			Debug_APIListPath.Text = PathHelper.ProcessOpenFileDialog( Debug_APIListPath.Text, APIListBrowser );
+			//Debug_APIListPath.Text = PathHelper.ProcessOpenFileDialog( Debug_APIListPath.Text, APIListBrowser );
 
 		}
 
 
 		private void Debug_EnableDebugMenu_CheckedChanged( object sender, EventArgs e ) {
 
-			Debug_SealingPanel.Visible =
-			Connection_UpstreamProxyAddress.Visible =
-			Connection_DownstreamProxy.Visible =
-			Connection_DownstreamProxyLabel.Visible =
-			SubWindow_Json_SealingPanel.Visible =
-				Debug_EnableDebugMenu.Checked;
+			//Debug_SealingPanel.Visible =
+			//Connection_UpstreamProxyAddress.Visible =
+			//Connection_DownstreamProxy.Visible =
+			//Connection_DownstreamProxyLabel.Visible =
+			//SubWindow_Json_SealingPanel.Visible =
+			//	Debug_EnableDebugMenu.Checked;
 
 		}
 
@@ -431,7 +431,7 @@ namespace ElectronicObserver.Window.Dialog {
 					FormBrowser_BrowserVersion.Enabled || FormBrowser_GPURendering.Enabled;
 			}
 			FormBrowser_FlashQuality.Text = config.FormBrowser.FlashQuality;
-			FormBrowser_FlashWMode.Text = config.FormBrowser.FlashWMode;
+			FormBrowser_FlashWMode.Text = config.FormBrowser.FlashWmode;
 			if ( !config.FormBrowser.IsToolMenuVisible )
 				FormBrowser_ToolMenuDockStyle.SelectedIndex = 4;
 			else
@@ -615,7 +615,7 @@ namespace ElectronicObserver.Window.Dialog {
 			config.FormBrowser.ShowURL = FormBrowser_ShowURL.Checked;
 			config.FormBrowser.ModifyCookieRegion = FormBrowser_ModifyCookieRegion.Checked;
 			config.FormBrowser.FlashQuality = FormBrowser_FlashQuality.Text;
-			config.FormBrowser.FlashWMode = FormBrowser_FlashWMode.Text;
+			config.FormBrowser.FlashWmode = FormBrowser_FlashWMode.Text;
 			if ( FormBrowser_ToolMenuDockStyle.SelectedIndex == 4 ) {
 				config.FormBrowser.IsToolMenuVisible = false;
 			} else {
