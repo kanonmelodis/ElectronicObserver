@@ -1,0 +1,221 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: 2.5.0.{build}
+
+# you can use {branch} name in version format too
+# version: 1.0.{build}-{branch}
+
+# branches to build
+
+# Do not build on tags (GitHub and BitBucket)
+skip_tags: true
+
+# Skipping commits affecting specific files (GitHub only). More details here: /docs/appveyor-yml
+#skip_commits:
+#  files:
+#    - docs/*
+#    - '**/*.html'
+
+# Including commits affecting specific files (GitHub only). More details here: /docs/appveyor-yml
+#only_commits:
+#  files:
+#    - Project-A/
+#    - Project-B/
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2015
+
+# scripts that are called at very beginning, before repo cloning
+
+# clone directory
+clone_folder: c:\projects\myproject
+
+# fetch repository as zip archive
+shallow_clone: false               # default is "false"
+
+# set clone depth
+clone_depth: 5                      # clone entire repository history if not defined
+
+# setting up etc\hosts file
+
+# environment variables
+
+# environment:
+#  global:
+#    connection_string: server=12;password=13;
+#    service_url: https://127.0.0.1:8090
+#
+#  matrix:
+#  - db: mysql
+#    provider: mysql
+#
+#  - db: mssql
+#    provider: mssql
+#    password:
+#      secure: $#(JFDA)jQ@#$
+
+# this is how to allow failing jobs in the matrix
+
+
+# build cache to preserve files/folders between builds
+
+
+# enable service required for build/tests
+
+
+# scripts that run after cloning repository
+
+# enable patching of AssemblyInfo.* files
+assembly_info:
+  patch: true
+  file: ElectronicObserver\Properties\AssemblyInfo.cs
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+
+
+# Automatically register private account and/or project AppVeyor NuGet feeds.
+nuget:
+  account_feed: false
+  project_feed: false
+  disable_publish_on_pr: true     # disable publishing of .nupkg artifacts to
+                                  # account/project feeds for pull request builds
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: Any CPU
+
+# to add several platforms to build matrix:
+#platform:
+#  - x86
+#  - Any CPU
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration: Release
+
+# to add several configurations to build matrix:
+#configuration:
+#  - Debug
+#  - Release
+
+build:
+  parallel: true                  # enable MSBuild parallel builds
+  project: ElectronicObserver.sln      # path to Visual Studio solution or project
+  publish_wap: false               # package Web Application Projects (WAP) for Web Deploy
+  publish_wap_xcopy: false         # package Web Application Projects (WAP) for XCopy deployment
+  publish_azure: false             # package Azure Cloud Service projects and push to artifacts
+  publish_nuget: false             # package projects with .nuspec files and push to artifacts
+  publish_nuget_symbols: false     # generate and publish NuGet symbol packages
+  include_nuget_references: false  # add -IncludeReferencedProjects option while packaging NuGet artifacts
+
+  # MSBuild verbosity level
+  verbosity: minimal
+
+
+# scripts to run before build
+before_build:
+  git.exe submodule update --init -- "DockPanelSuite"
+  
+  nuget restore
+# scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
+before_package:
+
+# scripts to run after build
+after_build:
+  copy output\*.* symbols\
+  
+  copy output\Plugins\*.* symbols\Plugins\
+  
+  del output\*.pdb
+  
+  del output\Plugins\*.pdb
+  
+  7z a 74eo.zip output
+  
+  appveyor PushArtifact 74eo.zip
+# to run your custom scripts instead of automatic MSBuild
+
+# to disable automatic builds
+#build: off
+
+#---------------------------------#
+#       tests configuration       #
+#---------------------------------#
+
+
+# to run tests from different categories as separate jobs in parallel
+#test:
+#  categories:
+#    - A            # A category common for all jobs
+#    - [UI]         # 1st job
+#    - [DAL, BL]    # 2nd job
+
+# scripts to run before tests
+
+# scripts to run after tests
+
+# to run your custom scripts instead of automatic tests
+
+# to disable automatic tests
+test: off
+
+
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+#artifacts:
+
+  #- path: output
+  #  type: zip
+  
+  #- path: symbols
+  #  type: zip
+
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+# providers: Local, FTP, WebDeploy, AzureCS, AzureBlob, S3, NuGet, Environment
+# provider names are case-sensitive!
+#deploy:
+
+ # release: 74EO-v$(appveyor_build_version)
+  #description: 'ElectronicObserver'
+  #provider: GitHub
+  #auth_token:
+  #  secure: b41188dabb06db5c61e8f79fc2dd5b875450b1f9 # your encrypted token from GitHub
+  #artifact: 74eo.zip          # upload all NuGet packages to release assets
+  #draft: false
+  #prerelease: true
+
+# to disable deployment
+deploy: off
+
+#---------------------------------#
+#        global handlers          #
+#---------------------------------#
+
+
+
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+
