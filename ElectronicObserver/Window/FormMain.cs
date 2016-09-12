@@ -200,7 +200,7 @@ namespace ElectronicObserver.Window
             Utility.Logger.Add(2, SoftwareInformation.SoftwareNameJapanese + " 开始启动…");
 
 
-            this.Text = SoftwareInformation.VersionJapanese + "（迷彩型）";
+            this.Text = SoftwareInformation.VersionJapanese;
             SyncBGMPlayer.Instance.ConfigurationChanged();
 
 
