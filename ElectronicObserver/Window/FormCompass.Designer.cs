@@ -65,7 +65,6 @@
 			// 
 			// TextMapArea
 			// 
-			this.TextMapArea.BackColor = System.Drawing.Color.Transparent;
 			this.TextMapArea.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TextMapArea.Location = new System.Drawing.Point(3, 3);
 			this.TextMapArea.Name = "TextMapArea";
@@ -75,7 +74,6 @@
 			// 
 			// TextDestination
 			// 
-			this.TextDestination.BackColor = System.Drawing.Color.Transparent;
 			this.TextDestination.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TextDestination.Location = new System.Drawing.Point(44, 3);
 			this.TextDestination.Name = "TextDestination";
@@ -85,7 +83,6 @@
 			// 
 			// TextEventKind
 			// 
-			this.TextEventKind.BackColor = System.Drawing.Color.Transparent;
 			this.TextEventKind.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TextEventKind.Location = new System.Drawing.Point(94, 3);
 			this.TextEventKind.Name = "TextEventKind";
@@ -95,7 +92,6 @@
 			// 
 			// TextEventDetail
 			// 
-			this.TextEventDetail.BackColor = System.Drawing.Color.Transparent;
 			this.TextEventDetail.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TextEventDetail.Location = new System.Drawing.Point(147, 3);
 			this.TextEventDetail.Name = "TextEventDetail";
@@ -160,7 +156,6 @@
 			// 
 			// TextEnemyFleetName
 			// 
-			this.TextEnemyFleetName.BackColor = System.Drawing.Color.Transparent;
 			this.TextEnemyFleetName.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TextEnemyFleetName.Location = new System.Drawing.Point(3, 0);
 			this.TextEnemyFleetName.Name = "TextEnemyFleetName";
@@ -171,7 +166,6 @@
 			// 
 			// TextFormation
 			// 
-			this.TextFormation.BackColor = System.Drawing.Color.Transparent;
 			this.TextFormation.ImageAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.TextFormation.Location = new System.Drawing.Point(68, 0);
 			this.TextFormation.Name = "TextFormation";
@@ -181,7 +175,6 @@
 			// 
 			// TextAirSuperiority
 			// 
-			this.TextAirSuperiority.BackColor = System.Drawing.Color.Transparent;
 			this.TextAirSuperiority.Location = new System.Drawing.Point(109, 0);
 			this.TextAirSuperiority.Name = "TextAirSuperiority";
 			this.TextAirSuperiority.Size = new System.Drawing.Size(175, 16);

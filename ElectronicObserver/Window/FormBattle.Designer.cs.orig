@@ -48,7 +48,16 @@
 			this.AirStage1Friend = new ElectronicObserver.Window.Control.ImageLabel();
 			this.SearchingEnemy = new ElectronicObserver.Window.Control.ImageLabel();
 			this.AirSuperiority = new ElectronicObserver.Window.Control.ImageLabel();
+<<<<<<< HEAD
+			this.FleetFriend = new ElectronicObserver.Window.Control.ImageLabel();
+			this.DamageFriend = new ElectronicObserver.Window.Control.ImageLabel();
+			this.WinRank = new ElectronicObserver.Window.Control.ImageLabel();
+			this.DamageEnemy = new ElectronicObserver.Window.Control.ImageLabel();
+			this.FleetCombined = new ElectronicObserver.Window.Control.ImageLabel();
+			this.FleetEnemy = new ElectronicObserver.Window.Control.ImageLabel();
 			this.ContextMenuBattle.SuspendLayout();
+=======
+>>>>>>> a-master/develop
 			this.TableBottom.SuspendLayout();
 			this.BaseLayoutPanel.SuspendLayout();
 			this.TableTop.SuspendLayout();

@@ -27,6 +27,11 @@ namespace ElectronicObserver.Notifier {
 		/// </summary>
 		public bool IsEnabled { get; set; }
 
+		/// <summary>
+		/// ミュート状態かどうか
+		/// </summary>
+		public bool IsSilenced { get; set; }
+
 
 		/// <summary>
 		/// 通知音
@@ -109,6 +114,7 @@ namespace ElectronicObserver.Notifier {
 				LoadSound( config.SoundPath );
 
 			IsEnabled = config.IsEnabled;
+			IsSilenced = config.IsSilenced;
 			PlaysSound = config.PlaysSound;
 			SoundVolume = config.SoundVolume;
 			LoopsSound = config.LoopsSound;
@@ -239,7 +245,7 @@ namespace ElectronicObserver.Notifier {
 		/// </summary>
 		public virtual void Notify() {
 
-			if ( !IsEnabled ) return;
+			if ( !IsEnabled || IsSilenced ) return;
 
 			ShowDialog();
 			PlaySound();
@@ -255,6 +261,7 @@ namespace ElectronicObserver.Notifier {
 			config.SoundVolume = SoundVolume;
 			config.LoopsSound = LoopsSound;
 			config.IsEnabled = IsEnabled;
+			config.IsSilenced = IsSilenced;
 			config.ShowsDialog = ShowsDialog;
 			config.AccelInterval = AccelInterval;
 

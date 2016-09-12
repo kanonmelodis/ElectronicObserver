@@ -1066,6 +1066,8 @@ namespace ElectronicObserver.Utility {
 
 				public bool IsEnabled { get; set; }
 
+				public bool IsSilenced { get; set; }
+
 				public bool ShowsDialog { get; set; }
 
 				public string ImagePath { get; set; }
@@ -1106,6 +1108,7 @@ namespace ElectronicObserver.Utility {
 
 				public ConfigNotifierBase() {
 					IsEnabled = true;
+					IsSilenced = false;
 					ShowsDialog = true;
 					ImagePath = "";
 					DrawsImage = false;

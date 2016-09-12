@@ -1,5 +1,4 @@
-﻿using ElectronicObserver.Notifier;
-using ElectronicObserver.Observer;
+﻿using ElectronicObserver.Observer;
 using ElectronicObserver.Resource;
 using ElectronicObserver.Utility;
 using ElectronicObserver.Utility.Storage;
@@ -36,11 +35,14 @@ namespace ElectronicObserver.Window.Dialog {
 		public DialogConfiguration() {
 			this.SuspendLayoutForDpiScale();
 			InitializeComponent();
+<<<<<<< HEAD
 
 			// 加载索敌式列表
 			FormFleet_SearchingAbilityMethod.Items.AddRange( Configuration.Config.FormFleet.SearchingAbilities.Split( ';' ) );
 
 			this.ResumeLayoutForDpiScale();
+=======
+>>>>>>> a-master/develop
 		}
 
 		public DialogConfiguration( Configuration.ConfigurationData config )
@@ -223,27 +225,24 @@ namespace ElectronicObserver.Window.Dialog {
 		}
 
 
-<<<<<<< HEAD
-=======
 		private void Debug_APIListPathSearch_Click( object sender, EventArgs e ) {
 
-			Debug_APIListPath.Text = PathHelper.ProcessOpenFileDialog( Debug_APIListPath.Text, APIListBrowser );
+			//Debug_APIListPath.Text = PathHelper.ProcessOpenFileDialog( Debug_APIListPath.Text, APIListBrowser );
 
 		}
 
 
 		private void Debug_EnableDebugMenu_CheckedChanged( object sender, EventArgs e ) {
 
-			Debug_SealingPanel.Visible =
-			Connection_UpstreamProxyAddress.Visible =
-			Connection_DownstreamProxy.Visible =
-			Connection_DownstreamProxyLabel.Visible =
-			SubWindow_Json_SealingPanel.Visible =
-				Debug_EnableDebugMenu.Checked;
+			//Debug_SealingPanel.Visible =
+			//Connection_UpstreamProxyAddress.Visible =
+			//Connection_DownstreamProxy.Visible =
+			//Connection_DownstreamProxyLabel.Visible =
+			//SubWindow_Json_SealingPanel.Visible =
+			//	Debug_EnableDebugMenu.Checked;
 
 		}
 
->>>>>>> v2.4.0.2
 
 		private void FormBrowser_ScreenShotPathSearch_Click( object sender, EventArgs e ) {
 
@@ -447,6 +446,13 @@ namespace ElectronicObserver.Window.Dialog {
 			FormJson_UpdatesTree.Checked = config.FormJson.UpdatesTree;
 			FormJson_AutoUpdateFilter.Text = config.FormJson.AutoUpdateFilter;
 
+			//[通知]
+			{
+				bool issilenced = NotifierManager.Instance.GetNotifiers().All( no => no.IsSilenced );
+				Notification_Silencio.Checked = issilenced;
+				setSilencioConfig( issilenced );
+			}
+
 			//[データベース]
 
 			//[BGM]
@@ -633,6 +639,9 @@ namespace ElectronicObserver.Window.Dialog {
 			config.FormJson.UpdatesTree = FormJson_UpdatesTree.Checked;
 			config.FormJson.AutoUpdateFilter = FormJson_AutoUpdateFilter.Text;
 
+			//[通知]
+			setSilencioConfig( Notification_Silencio.Checked );
+
 			//[データベース]
 
 			//[BGM]
@@ -775,6 +784,13 @@ namespace ElectronicObserver.Window.Dialog {
 				UpdateBGMPlayerUI();
 			}
 
+		}
+
+
+		private void setSilencioConfig( bool silenced ) {
+			foreach ( NotifierBase no in NotifierManager.Instance.GetNotifiers() ) {
+				no.IsSilenced = silenced;
+			}
 		}
 
 

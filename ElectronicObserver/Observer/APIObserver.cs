@@ -697,7 +697,7 @@ namespace ElectronicObserver.Observer {
 						oSession.oResponse.headers["Content-Type"] = "application/x-javascript";
 				}
 
-				}
+			}
 
 			// flash wmode & quality
 			else if ( oSession.fullUrl.Contains( "/gadget/js/kcs_flash.js" ) ) {
